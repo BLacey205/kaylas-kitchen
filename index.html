@@ -193,6 +193,17 @@ details.ingdrawer ul{margin:8px 0 0;padding-left:18px}
 .shop .x{border:0;background:none;color:var(--muted);font-size:20px;line-height:1;padding:0 4px}
 .copyfall{width:100%;min-height:140px;font-family:var(--mono);font-size:13px;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--ink);padding:10px}
 
+/* Cook-along video */
+.player{position:relative;width:100%;max-width:100%;aspect-ratio:16/9;border-radius:12px;overflow:hidden;background:#000}
+.player iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.vidface{position:relative;display:block;width:100%;max-width:100%;aspect-ratio:16/9;border:0;padding:0;border-radius:12px;overflow:hidden;background:var(--surface-2)}
+.vidface img{width:100%;height:100%;object-fit:cover;display:block}
+.vidplay{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);display:flex;align-items:center;gap:10px;background:var(--collard);color:var(--on-collard);padding:10px 16px;border-radius:999px;font-weight:700;box-shadow:var(--shadow);white-space:nowrap}
+.vidplay .tri{width:0;height:0;border-left:12px solid currentColor;border-top:7px solid transparent;border-bottom:7px solid transparent}
+a.btn{text-decoration:none;display:inline-block}
+a.mini{text-decoration:none;color:var(--ink)}
+.vidbar{display:grid;gap:8px;padding-block:8px}
+.vidbar .player{max-height:34vh;aspect-ratio:16/9;margin-inline:auto;width:auto;height:min(34vh,56vw)}
 /* Journal form */
 .logform{display:grid;gap:16px;max-width:640px}
 .field{display:grid;gap:6px;min-width:0}
@@ -608,6 +619,310 @@ const ALT = {
 "peach-cobbler":[["grilled","Bake it in a cast-iron skillet on a covered grill at 350°F, or grill peach halves and spoon the batter topping over in the skillet."]]
 };
 
+// Cook-along videos: one verified YouTube pick per recipe (checked live via vidIQ on 2026-10-09).
+const VIDEOS = {
+"fried-chicken": {
+"id": "bnaY8RLqnWc",
+"ch": "BBQ Southern Style",
+"t": "Southern Fried Chicken The Best Way to Make It",
+"m": 34
+},
+"chicken-dumplings": {
+"id": "X8snVH3VC04",
+"ch": "Bruce Mitchell",
+"t": "Southern Chicken and Dumplings with Bruce Mitchell",
+"m": 12
+},
+"shrimp-grits": {
+"id": "cjlDBPlTqS0",
+"ch": "Smokin' & Grillin with AB",
+"t": "Shrimp and Grits",
+"m": 8
+},
+"chicken-fried-steak": {
+"id": "0t3ri607SlU",
+"ch": "World of Flavor",
+"t": "Chicken Fried Steak with Cream Gravy Recipe",
+"m": 12
+},
+"smothered-pork-chops": {
+"id": "imO7ef-IQsQ",
+"ch": "Island Vibe Cooking",
+"t": "How To Make Southern Smothered Pork Chops",
+"m": 6
+},
+"meatloaf": {
+"id": "iUgl5BLXcb8",
+"ch": "Paula Deen",
+"t": "Love & Best Dishes: Old-Fashioned Southern Meatloaf Recipe",
+"m": 12
+},
+"pulled-pork": {
+"id": "WYpeLSDLuTk",
+"ch": "Smokestack Joe's ",
+"t": "The BEST Way To Make Juicy PULLED PORK Eastern Carolina Style",
+"m": 22
+},
+"gumbo": {
+"id": "bE_su8zZ51k",
+"ch": "Allrecipes",
+"t": "How to Make Chicken & Sausage Gumbo",
+"m": 11
+},
+"red-beans-rice": {
+"id": "cSie0gBzsMI",
+"ch": "Food Network",
+"t": "Kenneth Temple's Red Beans and Rice",
+"m": 22
+},
+"jambalaya": {
+"id": "yLNWhfOeksI",
+"ch": "Smokin' & Grillin with AB",
+"t": "How to Make Authentic Jambalaya",
+"m": 14
+},
+"fried-catfish": {
+"id": "_mWx5Bz-fxQ",
+"ch": "Food Network",
+"t": "Kardea Brown's Cornmeal-Crusted Catfish",
+"m": 3
+},
+"pot-roast": {
+"id": "gbtnJ3G2zcc",
+"ch": "Frannie Jo Savvy Sweet",
+"t": "Old-Fashioned Southern Pot Roast",
+"m": 18
+},
+"nashville-hot": {
+"id": "mKu7Qg8wFKQ",
+"ch": "Joshua Weissman Recipes ",
+"t": "The Best Spicy Fried Chicken At Home (Nashville Hot)",
+"m": 10
+},
+"smothered-chicken": {
+"id": "kuRtO2Jn83k",
+"ch": "Cooking With TK ",
+"t": "How To Make Real Southern Smothered Chicken And Gravy| Soul Food Cooking",
+"m": 15
+},
+"chicken-pot-pie": {
+"id": "W0y7LsZujFI",
+"ch": "Marie's Kitchen",
+"t": "Best Ever Chicken Pot Pie from Scratch",
+"m": 16
+},
+"etouffee": {
+"id": "qHV57tyt5-g",
+"ch": "Bruce Mitchell",
+"t": "Crawfish Etouffee with Bruce Mitchell",
+"m": 8
+},
+"oxtails": {
+"id": "Bh-lnQLx2PA",
+"ch": "Smokin' & Grillin with AB",
+"t": "Smothered Oxtails with Brown Gravy",
+"m": 18
+},
+"salmon-croquettes": {
+"id": "0WAElrSBI3g",
+"ch": "Soul Food Cooking",
+"t": "Old School Southern Salmon Patties - How to Make The BEST Salmon Croquettes",
+"m": 2
+},
+"lowcountry-boil": {
+"id": "KqtxKcAzUuo",
+"ch": "Southern Food Junkie",
+"t": "How to make Low Country Boil",
+"m": 4
+},
+"shrimp-po-boy": {
+"id": "bwRkunoyJCc",
+"ch": "Island Vibe Cooking",
+"t": "The BEST Shrimp Po' Boy Recipe",
+"m": 9
+},
+"mac-cheese": {
+"id": "7dwFw6R7_dY",
+"ch": "Smokin' & Grillin with AB",
+"t": "The BEST Southern Baked Mac and Cheese",
+"m": 11
+},
+"collard-greens": {
+"id": "bDJsTui-R9c",
+"ch": "I Heart Recipes",
+"t": "Collard Greens Recipe Using Smoked Turkey",
+"m": 5
+},
+"candied-yams": {
+"id": "33zVFId6xr4",
+"ch": "Island Vibe Cooking",
+"t": "Candied Yams Oven Baked Southern Style",
+"m": 6
+},
+"fried-okra": {
+"id": "apW01cZvfQ4",
+"ch": "All Wings Everything",
+"t": "The Secret to Crispy Southern Fried Okra",
+"m": 7
+},
+"hoppin-john": {
+"id": "Wv4sT9n9cyA",
+"ch": "Smokin' & Grillin with AB",
+"t": "Hoppin' John & Black Eyed Peas - New Years Special Recipe!",
+"m": 12
+},
+"fried-green-tomatoes": {
+"id": "aPdGOOeb0D4",
+"ch": "Paula Deen",
+"t": "Love & Best Dishes: Southern Fried Green Tomatoes Recipe",
+"m": 12
+},
+"potato-salad": {
+"id": "-nNxJTdRJmw",
+"ch": "April in the kitchen",
+"t": "How to Make the Best Southern Potato Salad",
+"m": 3
+},
+"coleslaw": {
+"id": "V_x5uO8XYMk",
+"ch": "Steph’s Stove by Stephanie Thomas",
+"t": "Classic Southern Coleslaw - Sweet Tangy & Delicious - Steph’s Stove",
+"m": 16
+},
+"cornbread-dressing": {
+"id": "_2xC8YTtxa8",
+"ch": "Camirra's Kitchen",
+"t": "The BEST Southern CORNBREAD DRESSING Recipe! Grandma's Secret to the Perfect Dressing!",
+"m": 14
+},
+"green-beans-potatoes": {
+"id": "xRUA88nshiU",
+"ch": "Soul Food Cooking",
+"t": "Green Beans and Potatoes Recipe - How to Make Southern Green Beans and Potatoes",
+"m": 4
+},
+"fried-cabbage": {
+"id": "8WVvX82gHpA",
+"ch": "Come Sit At My Table",
+"t": "Southern Bacon-Fried Cabbage - A MUST for New Year’s Day - A Long Time Southern Custom",
+"m": 30
+},
+"squash-casserole": {
+"id": "bk7ZOJx_inQ",
+"ch": "Paula Deen",
+"t": "Love & Best Dishes: Southern Squash Casserole Recipe",
+"m": 14
+},
+"corn-pudding": {
+"id": "67uThoHPB-I",
+"ch": "Beverly Black",
+"t": "How To Make Southern Corn Pudding",
+"m": 8
+},
+"butter-beans": {
+"id": "GskAhJ8D-vM",
+"ch": "OLD SCHOOL SOUL FOOD",
+"t": "OLD SCHOOL BUTTER BEANS AND HAM HOCKS/SUNDAY DINNER RECIPE IDEAS SEGMENT",
+"m": 8
+},
+"deviled-eggs": {
+"id": "7IlVFAlqpG0",
+"ch": "Paula Deen",
+"t": "Love & Best Dishes: Traditional Southern Deviled Eggs Recipe",
+"m": 6
+},
+"biscuits": {
+"id": "ZHr4ne6v49I",
+"ch": "Virginia Willis",
+"t": "How to Make Classic Southern Buttermilk Biscuits with @ChefVirginiaWillis",
+"m": 11
+},
+"skillet-cornbread": {
+"id": "jSzFsETAVaQ",
+"ch": "Charlie Andrews",
+"t": "How to make Southern Cast Iron Skillet Cornbread",
+"m": 8
+},
+"hushpuppies": {
+"id": "6Q1FLISmziI",
+"ch": "TheCooknShare",
+"t": "Easy Southern Hush Puppies - Down Home Style",
+"m": 4
+},
+"biscuits-gravy": {
+"id": "rYf3yfftL_I",
+"ch": "The Sauce and Gravy Channel",
+"t": "How to Make Sausage Gravy for Biscuits and Gravy",
+"m": 6
+},
+"cheese-grits": {
+"id": "XJOx_Lx8qXE",
+"ch": "Great Lakes Country",
+"t": "Best Cheesy Southern Grits Recipe - Easy Authentic Grits and Cheese from Scratch",
+"m": 7
+},
+"chicken-waffles": {
+"id": "UluYgXkuPpc",
+"ch": "Mr. Make It Happen",
+"t": "How To Make Chicken & Waffles - Fried Chicken & Homemade Waffles Recipe #MrMakeItHappen",
+"m": 8
+},
+"pimento-cheese": {
+"id": "J-27Qvnh8ww",
+"ch": "Paula Deen",
+"t": "Love & Best Dishes: Bobby's Pimiento Cheese Recipe",
+"m": 5
+},
+"peach-cobbler": {
+"id": "y49q5y2130o",
+"ch": "Paula Deen",
+"t": "Love & Best Dishes: Southern Peach Cobbler Recipe",
+"m": 14
+},
+"banana-pudding": {
+"id": "0v4Hf0AoED4",
+"ch": "Steph’s Stove by Stephanie Thomas",
+"t": "Homemade Banana Pudding - Old Fashioned from Scratch Southern Recipe - Steph’s Stove",
+"m": 15
+},
+"pecan-pie": {
+"id": "Y9s7rRdExAE",
+"ch": "Paula Deen",
+"t": "Full Episode Fridays: The Forgotten Crust - Homemade Southern Pecan Pie Recipe",
+"m": 21
+},
+"sweet-potato-pie": {
+"id": "uKR9-1bdUKg",
+"ch": "Paula Deen",
+"t": "Holiday Cooking & Baking Recipes: Old-Fashioned Southern Sweet Potato Pie Recipe",
+"m": 13
+},
+"red-velvet": {
+"id": "At4GymbpiSU",
+"ch": "Natashas Kitchen",
+"t": "RED VELVET CAKE RECIPE with Cream Cheese Frosting",
+"m": 12
+},
+"pound-cake": {
+"id": "rWZQrsCLYUs",
+"ch": "Paula Deen",
+"t": "Love & Best Dishes: Classic Pound Cake Recipe",
+"m": 14
+},
+"hummingbird-cake": {
+"id": "U7FRWWd6oQQ",
+"ch": "Cakes by MK",
+"t": "The most flavor packed HUMMINGBIRD CAKE that stays moist for DAYS!",
+"m": 7
+},
+"sweet-tea": {
+"id": "28VYlDkbxzE",
+"ch": "Paula Deen",
+"t": "Love & Best Dishes: How to Make Sweet Tea Southern Style",
+"m": 11
+}
+};
+
 </script>
 <script>
 (function(){
@@ -760,6 +1075,7 @@ function sheetRecipe(r){
   '<div class="fact"><span class="muted">Level</span><b style="font-family:var(--body);font-size:14px;font-weight:600">'+diffBars(r.d)+' '+DIFF[r.d]+'</b></div>'+
   '<div class="fact"><span class="muted">Serves</span><span class="stepper"><button data-act="serv" data-id="'+r.id+'" data-d="-1" aria-label="Fewer servings">−</button><b>'+serv+'</b><button data-act="serv" data-id="'+r.id+'" data-d="1" aria-label="More servings">+</button></span></div></div>'+
   '<div class="tip"><span class="eyebrow">Kayla\'s tip</span><p>'+r.tip+'</p></div>'+
+  cookAlongBlock(r)+
   (r.k.length?'<div class="block"><span class="eyebrow">Skills you\'ll practice</span><div class="pills">'+techPills(r.k)+'</div></div>':'')+
   (r.sp.length?'<div class="block"><span class="eyebrow">Herbs &amp; spices in this dish</span><div class="pills">'+spicePills(r.sp)+'</div></div>':'')+
   waysToCook(r)+
@@ -838,10 +1154,35 @@ function startTimer(step,sec){
   state.timer.iv=setInterval(tick,500);
   try{audio=audio||new (window.AudioContext||window.webkitAudioContext)();audio.resume&&audio.resume();}catch(e){}
 }
+/* ---------- cook-along videos ---------- */
+/* YouTube players can be embedded on the public website. Inside Claude the page cannot embed other sites, so it links out instead. */
+const CAN_EMBED=!/claude/i.test(location.hostname);
+function ytWatch(v){return "https://www.youtube.com/watch?v="+v.id;}
+function ytSearch(r){return "https://www.youtube.com/results?search_query="+encodeURIComponent(r.n+" recipe");}
+function ytEmbed(v,autoplay){return "https://www.youtube-nocookie.com/embed/"+v.id+"?rel=0&playsinline=1"+(autoplay?"&autoplay=1":"");}
+function playerHTML(v,autoplay){return '<div class="player"><iframe src="'+ytEmbed(v,autoplay)+'" title="'+esc(v.t)+' by '+esc(v.ch)+'" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen loading="lazy" referrerpolicy="strict-origin-when-cross-origin"></iframe></div>';}
+function videoLinks(r,v){return '<div class="row"><a class="btn small ghost" href="'+ytWatch(v)+'" target="_blank" rel="noopener">Watch on YouTube</a><a class="btn small ghost" href="'+ytSearch(r)+'" target="_blank" rel="noopener">More videos</a></div>';}
+function cookAlongBlock(r){
+  const v=VIDEOS[r.id];if(!v)return "";
+  const head='<div class="section-head"><h2>Cook along</h2><span class="mono muted">'+v.m+' min video</span></div><p class="muted" style="margin:0">'+esc(v.t)+' · '+esc(v.ch)+'. Their amounts and times may differ a little from this recipe.</p>';
+  if(!CAN_EMBED)return '<div class="block">'+head+videoLinks(r,v)+'</div>';
+  return '<div class="block">'+head+('<button class="vidface" data-act="vid-play" data-id="'+r.id+'" aria-label="Play cook-along video: '+esc(v.t)+'"><img src="https://i.ytimg.com/vi/'+v.id+'/hqdefault.jpg" alt="" loading="lazy"><span class="vidplay"><span class="tri"></span>Play cook-along</span></button>')+videoLinks(r,v)+'</div>';
+}
+function renderCookVideo(){
+  const slot=$("#ck-vid");if(!slot||!state.cook)return;const r=R[state.cook.id],v=VIDEOS[r.id];
+  if(!v){slot.innerHTML="";return;}
+  if(!CAN_EMBED){slot.innerHTML='<div class="wrap vidbar"><a class="mini" href="'+ytWatch(v)+'" target="_blank" rel="noopener"><span>Cook along with '+esc(v.ch)+'</span><span class="mono">Opens YouTube</span></a></div>';return;}
+  slot.innerHTML='<div class="wrap vidbar"><button class="mini" data-act="cook-vid"><span>'+(state.cookVid?'Hide video':'Cook along with '+esc(v.ch))+'</span><span class="mono">'+(state.cookVid?'▲':'▶ '+v.m+' min')+'</span></button>'+(state.cookVid?playerHTML(v,true):'')+'</div>';
+}
 function renderCook(){
   const el=$("#cook");
-  if(!state.cook){el.hidden=true;el.innerHTML="";return;}
+  if(!state.cook){el.hidden=true;el.innerHTML="";el.dataset.rid="";return;}
   const r=R[state.cook.id],i=state.cook.i,s=r.st[i],n=r.st.length,tm=state.timer,f=factor(r);
+  /* The shell is built once per cooking session so the video player is never re-created between steps. */
+  if(el.dataset.rid!==r.id){
+    el.innerHTML='<div class="cook-top" id="ck-top"></div><div class="bar" id="ck-bar"></div><div id="ck-vid"></div><div class="cook-main" id="ck-main"></div><div class="cook-foot" id="ck-foot"></div>';
+    el.dataset.rid=r.id;state.cookVid=false;renderCookVideo();
+  }
   let timer="";
   if(s[1]){
     const mine=tm&&tm.step===i&&tm.id===r.id;
@@ -851,14 +1192,14 @@ function renderCook(){
       (mine?'<button class="btn small ghost" data-act="timer-reset">Reset</button>':'')+'</div></div>';
   }
   const other=tm&&tm.id===r.id&&tm.step!==i&&(tm.running||tm.done)?'<button class="mini" data-act="cook-goto" data-id="'+tm.step+'"><span>Step '+(tm.step+1)+' timer</span><span class="mono tm-text">'+fmtClock(tm.rem)+'</span></button>':'';
-  el.innerHTML='<div class="cook-top"><div class="wrap"><button class="iconbtn" data-act="cook-close" aria-label="Exit cook mode">'+ICON.close+'</button><span class="title" style="flex:1;min-width:0;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+r.n+'</span><span class="mono muted">'+(i+1)+'/'+n+'</span></div></div>'+
-    '<div class="bar"><span style="width:'+((i+1)/n*100)+'%"></span></div>'+
-    '<div class="cook-main"><div class="wrap">'+other+'<span class="eyebrow">Step '+(i+1)+' of '+n+'</span><p class="cook-step">'+s[0]+'</p>'+timer+
+  $("#ck-top").innerHTML='<div class="wrap"><button class="iconbtn" data-act="cook-close" aria-label="Exit cook mode">'+ICON.close+'</button><span class="title" style="flex:1;min-width:0;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+r.n+'</span><span class="mono muted">'+(i+1)+'/'+n+'</span></div>';
+  $("#ck-bar").innerHTML='<span style="width:'+((i+1)/n*100)+'%"></span>';
+  $("#ck-main").innerHTML='<div class="wrap">'+other+'<span class="eyebrow">Step '+(i+1)+' of '+n+'</span><p class="cook-step">'+s[0]+'</p>'+timer+
     (i===0&&r.k.length?'<div class="block"><span class="eyebrow">Skills in this recipe</span><div class="pills">'+r.k.map(k=>'<span class="pill tech">'+T[k].n+'</span>').join("")+'</div></div>':'')+
     '<details class="ingdrawer"'+(i===0?" open":"")+'><summary>Ingredients for '+(state.serv[r.id]||r.s)+'</summary><ul>'+r.i.map(x=>'<li><span class="mono">'+amount(x,f)+'</span> '+x[2]+'</li>').join("")+'</ul></details>'+
-    '</div></div>'+
-    '<div class="cook-foot"><div class="wrap"><button class="btn ghost" data-act="cook-prev" '+(i===0?"disabled":"")+'>Back</button>'+
-    (i<n-1?'<button class="btn" data-act="cook-next">Next step</button>':'<button class="btn" data-act="cook-finish">Finish and mark cooked</button>')+'</div></div>';
+    '</div>';
+  $("#ck-foot").innerHTML='<div class="wrap"><button class="btn ghost" data-act="cook-prev" '+(i===0?"disabled":"")+'>Back</button>'+
+    (i<n-1?'<button class="btn" data-act="cook-next">Next step</button>':'<button class="btn" data-act="cook-finish">Finish and mark cooked</button>')+'</div>';
   el.hidden=false;
 }
 async function lockScreen(){try{if(navigator.wakeLock)wake=await navigator.wakeLock.request("screen");}catch(e){wake=null;}}
@@ -939,7 +1280,9 @@ document.addEventListener("click",e=>{
     case "shop-add":{const r=R[id],f=factor(r);let n=0;r.i.forEach(x=>{const text=(amount(x,f)+" "+x[2]).trim();if(!store.shop.some(s=>s.text===text&&s.from===r.n)){store.shop.push({text,from:r.n,done:false});n++;}});save();toast(n?n+" items added to your shopping list":"Already on your list");break;}
     case "mark-cooked":if(store.cooked[id]){delete store.cooked[id];toast("Unmarked");}else{store.cooked[id]=today();toast("Nice work. Marked as cooked.");}save();refreshSheet();render();break;
     case "quiz":{state.quizPick=state.quizPick||{};const i=Number(b.dataset.i);state.quizPick[id]=i;if(i===T[id].a){store.quiz[id]=true;save();}refreshSheet();render();break;}
-    case "cook-start":state.cook={id,i:0,started:Date.now()};lockScreen();renderCook();break;
+    case "cook-start":refreshSheet();/* stops a recipe-page video so two don't play at once */state.cook={id,i:0,started:Date.now()};lockScreen();renderCook();break;
+    case "vid-play":{const v=VIDEOS[id];if(v)b.outerHTML=playerHTML(v,true);break;}
+    case "cook-vid":state.cookVid=!state.cookVid;renderCookVideo();break;
     case "cook-next":state.cook.i++;renderCook();$("#cook .cook-main").scrollTop=0;break;
     case "cook-prev":if(state.cook.i>0)state.cook.i--;renderCook();break;
     case "cook-goto":state.cook.i=Number(id);renderCook();break;

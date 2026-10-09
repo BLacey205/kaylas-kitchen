@@ -10,7 +10,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).parent
 SRC = ROOT / "src"
-DATA_FILES = ["data1.js", "data2.js", "data3.js", "data4.js"]
+DATA_FILES = ["data1.js", "data2.js", "data3.js", "data4.js", "data5.js"]
 
 HEAD = """<!doctype html>
 <html lang="en">

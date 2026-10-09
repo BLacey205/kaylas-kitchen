@@ -186,6 +186,17 @@ details.ingdrawer ul{margin:8px 0 0;padding-left:18px}
 .shop .x{border:0;background:none;color:var(--muted);font-size:20px;line-height:1;padding:0 4px}
 .copyfall{width:100%;min-height:140px;font-family:var(--mono);font-size:13px;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--ink);padding:10px}
 
+/* Cook-along video */
+.player{position:relative;width:100%;max-width:100%;aspect-ratio:16/9;border-radius:12px;overflow:hidden;background:#000}
+.player iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.vidface{position:relative;display:block;width:100%;max-width:100%;aspect-ratio:16/9;border:0;padding:0;border-radius:12px;overflow:hidden;background:var(--surface-2)}
+.vidface img{width:100%;height:100%;object-fit:cover;display:block}
+.vidplay{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);display:flex;align-items:center;gap:10px;background:var(--collard);color:var(--on-collard);padding:10px 16px;border-radius:999px;font-weight:700;box-shadow:var(--shadow);white-space:nowrap}
+.vidplay .tri{width:0;height:0;border-left:12px solid currentColor;border-top:7px solid transparent;border-bottom:7px solid transparent}
+a.btn{text-decoration:none;display:inline-block}
+a.mini{text-decoration:none;color:var(--ink)}
+.vidbar{display:grid;gap:8px;padding-block:8px}
+.vidbar .player{max-height:34vh;aspect-ratio:16/9;margin-inline:auto;width:auto;height:min(34vh,56vw)}
 /* Journal form */
 .logform{display:grid;gap:16px;max-width:640px}
 .field{display:grid;gap:6px;min-width:0}
@@ -384,6 +395,7 @@ function sheetRecipe(r){
   '<div class="fact"><span class="muted">Level</span><b style="font-family:var(--body);font-size:14px;font-weight:600">'+diffBars(r.d)+' '+DIFF[r.d]+'</b></div>'+
   '<div class="fact"><span class="muted">Serves</span><span class="stepper"><button data-act="serv" data-id="'+r.id+'" data-d="-1" aria-label="Fewer servings">−</button><b>'+serv+'</b><button data-act="serv" data-id="'+r.id+'" data-d="1" aria-label="More servings">+</button></span></div></div>'+
   '<div class="tip"><span class="eyebrow">Kayla\'s tip</span><p>'+r.tip+'</p></div>'+
+  cookAlongBlock(r)+
   (r.k.length?'<div class="block"><span class="eyebrow">Skills you\'ll practice</span><div class="pills">'+techPills(r.k)+'</div></div>':'')+
   (r.sp.length?'<div class="block"><span class="eyebrow">Herbs &amp; spices in this dish</span><div class="pills">'+spicePills(r.sp)+'</div></div>':'')+
   waysToCook(r)+
@@ -462,10 +474,35 @@ function startTimer(step,sec){
   state.timer.iv=setInterval(tick,500);
   try{audio=audio||new (window.AudioContext||window.webkitAudioContext)();audio.resume&&audio.resume();}catch(e){}
 }
+/* ---------- cook-along videos ---------- */
+/* YouTube players can be embedded on the public website. Inside Claude the page cannot embed other sites, so it links out instead. */
+const CAN_EMBED=!/claude/i.test(location.hostname);
+function ytWatch(v){return "https://www.youtube.com/watch?v="+v.id;}
+function ytSearch(r){return "https://www.youtube.com/results?search_query="+encodeURIComponent(r.n+" recipe");}
+function ytEmbed(v,autoplay){return "https://www.youtube-nocookie.com/embed/"+v.id+"?rel=0&playsinline=1"+(autoplay?"&autoplay=1":"");}
+function playerHTML(v,autoplay){return '<div class="player"><iframe src="'+ytEmbed(v,autoplay)+'" title="'+esc(v.t)+' by '+esc(v.ch)+'" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen loading="lazy" referrerpolicy="strict-origin-when-cross-origin"></iframe></div>';}
+function videoLinks(r,v){return '<div class="row"><a class="btn small ghost" href="'+ytWatch(v)+'" target="_blank" rel="noopener">Watch on YouTube</a><a class="btn small ghost" href="'+ytSearch(r)+'" target="_blank" rel="noopener">More videos</a></div>';}
+function cookAlongBlock(r){
+  const v=VIDEOS[r.id];if(!v)return "";
+  const head='<div class="section-head"><h2>Cook along</h2><span class="mono muted">'+v.m+' min video</span></div><p class="muted" style="margin:0">'+esc(v.t)+' · '+esc(v.ch)+'. Their amounts and times may differ a little from this recipe.</p>';
+  if(!CAN_EMBED)return '<div class="block">'+head+videoLinks(r,v)+'</div>';
+  return '<div class="block">'+head+('<button class="vidface" data-act="vid-play" data-id="'+r.id+'" aria-label="Play cook-along video: '+esc(v.t)+'"><img src="https://i.ytimg.com/vi/'+v.id+'/hqdefault.jpg" alt="" loading="lazy"><span class="vidplay"><span class="tri"></span>Play cook-along</span></button>')+videoLinks(r,v)+'</div>';
+}
+function renderCookVideo(){
+  const slot=$("#ck-vid");if(!slot||!state.cook)return;const r=R[state.cook.id],v=VIDEOS[r.id];
+  if(!v){slot.innerHTML="";return;}
+  if(!CAN_EMBED){slot.innerHTML='<div class="wrap vidbar"><a class="mini" href="'+ytWatch(v)+'" target="_blank" rel="noopener"><span>Cook along with '+esc(v.ch)+'</span><span class="mono">Opens YouTube</span></a></div>';return;}
+  slot.innerHTML='<div class="wrap vidbar"><button class="mini" data-act="cook-vid"><span>'+(state.cookVid?'Hide video':'Cook along with '+esc(v.ch))+'</span><span class="mono">'+(state.cookVid?'▲':'▶ '+v.m+' min')+'</span></button>'+(state.cookVid?playerHTML(v,true):'')+'</div>';
+}
 function renderCook(){
   const el=$("#cook");
-  if(!state.cook){el.hidden=true;el.innerHTML="";return;}
+  if(!state.cook){el.hidden=true;el.innerHTML="";el.dataset.rid="";return;}
   const r=R[state.cook.id],i=state.cook.i,s=r.st[i],n=r.st.length,tm=state.timer,f=factor(r);
+  /* The shell is built once per cooking session so the video player is never re-created between steps. */
+  if(el.dataset.rid!==r.id){
+    el.innerHTML='<div class="cook-top" id="ck-top"></div><div class="bar" id="ck-bar"></div><div id="ck-vid"></div><div class="cook-main" id="ck-main"></div><div class="cook-foot" id="ck-foot"></div>';
+    el.dataset.rid=r.id;state.cookVid=false;renderCookVideo();
+  }
   let timer="";
   if(s[1]){
     const mine=tm&&tm.step===i&&tm.id===r.id;
@@ -475,14 +512,14 @@ function renderCook(){
       (mine?'<button class="btn small ghost" data-act="timer-reset">Reset</button>':'')+'</div></div>';
   }
   const other=tm&&tm.id===r.id&&tm.step!==i&&(tm.running||tm.done)?'<button class="mini" data-act="cook-goto" data-id="'+tm.step+'"><span>Step '+(tm.step+1)+' timer</span><span class="mono tm-text">'+fmtClock(tm.rem)+'</span></button>':'';
-  el.innerHTML='<div class="cook-top"><div class="wrap"><button class="iconbtn" data-act="cook-close" aria-label="Exit cook mode">'+ICON.close+'</button><span class="title" style="flex:1;min-width:0;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+r.n+'</span><span class="mono muted">'+(i+1)+'/'+n+'</span></div></div>'+
-    '<div class="bar"><span style="width:'+((i+1)/n*100)+'%"></span></div>'+
-    '<div class="cook-main"><div class="wrap">'+other+'<span class="eyebrow">Step '+(i+1)+' of '+n+'</span><p class="cook-step">'+s[0]+'</p>'+timer+
+  $("#ck-top").innerHTML='<div class="wrap"><button class="iconbtn" data-act="cook-close" aria-label="Exit cook mode">'+ICON.close+'</button><span class="title" style="flex:1;min-width:0;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+r.n+'</span><span class="mono muted">'+(i+1)+'/'+n+'</span></div>';
+  $("#ck-bar").innerHTML='<span style="width:'+((i+1)/n*100)+'%"></span>';
+  $("#ck-main").innerHTML='<div class="wrap">'+other+'<span class="eyebrow">Step '+(i+1)+' of '+n+'</span><p class="cook-step">'+s[0]+'</p>'+timer+
     (i===0&&r.k.length?'<div class="block"><span class="eyebrow">Skills in this recipe</span><div class="pills">'+r.k.map(k=>'<span class="pill tech">'+T[k].n+'</span>').join("")+'</div></div>':'')+
     '<details class="ingdrawer"'+(i===0?" open":"")+'><summary>Ingredients for '+(state.serv[r.id]||r.s)+'</summary><ul>'+r.i.map(x=>'<li><span class="mono">'+amount(x,f)+'</span> '+x[2]+'</li>').join("")+'</ul></details>'+
-    '</div></div>'+
-    '<div class="cook-foot"><div class="wrap"><button class="btn ghost" data-act="cook-prev" '+(i===0?"disabled":"")+'>Back</button>'+
-    (i<n-1?'<button class="btn" data-act="cook-next">Next step</button>':'<button class="btn" data-act="cook-finish">Finish and mark cooked</button>')+'</div></div>';
+    '</div>';
+  $("#ck-foot").innerHTML='<div class="wrap"><button class="btn ghost" data-act="cook-prev" '+(i===0?"disabled":"")+'>Back</button>'+
+    (i<n-1?'<button class="btn" data-act="cook-next">Next step</button>':'<button class="btn" data-act="cook-finish">Finish and mark cooked</button>')+'</div>';
   el.hidden=false;
 }
 async function lockScreen(){try{if(navigator.wakeLock)wake=await navigator.wakeLock.request("screen");}catch(e){wake=null;}}
@@ -563,7 +600,9 @@ document.addEventListener("click",e=>{
     case "shop-add":{const r=R[id],f=factor(r);let n=0;r.i.forEach(x=>{const text=(amount(x,f)+" "+x[2]).trim();if(!store.shop.some(s=>s.text===text&&s.from===r.n)){store.shop.push({text,from:r.n,done:false});n++;}});save();toast(n?n+" items added to your shopping list":"Already on your list");break;}
     case "mark-cooked":if(store.cooked[id]){delete store.cooked[id];toast("Unmarked");}else{store.cooked[id]=today();toast("Nice work. Marked as cooked.");}save();refreshSheet();render();break;
     case "quiz":{state.quizPick=state.quizPick||{};const i=Number(b.dataset.i);state.quizPick[id]=i;if(i===T[id].a){store.quiz[id]=true;save();}refreshSheet();render();break;}
-    case "cook-start":state.cook={id,i:0,started:Date.now()};lockScreen();renderCook();break;
+    case "cook-start":refreshSheet();/* stops a recipe-page video so two don't play at once */state.cook={id,i:0,started:Date.now()};lockScreen();renderCook();break;
+    case "vid-play":{const v=VIDEOS[id];if(v)b.outerHTML=playerHTML(v,true);break;}
+    case "cook-vid":state.cookVid=!state.cookVid;renderCookVideo();break;
     case "cook-next":state.cook.i++;renderCook();$("#cook .cook-main").scrollTop=0;break;
     case "cook-prev":if(state.cook.i>0)state.cook.i--;renderCook();break;
     case "cook-goto":state.cook.i=Number(id);renderCook();break;

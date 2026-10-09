@@ -28,6 +28,14 @@ A free, single-page interactive cooking app (one HTML file, no backend, no paid 
 - Recipe pages show "Log this meal" and list past journal entries for that dish. Entries can be edited, deleted (two-tap confirm) and copied as text.
 - Stored per device in localStorage under `kk.v1` → `journal`.
 
+## v1.3: Cook-along videos
+- Every recipe has one hand-picked YouTube cook-along video (`VIDEOS` in `src/data5.js`: id, channel, title, minutes).
+- Picks were found with free web searches, then verified live with vidIQ `get_videos_by_ids` (about 5 credits per 25 videos). Weak candidates (under ~2 minutes, very few views, or removed) were swapped for stronger backups. Full verification data: `src/video_picks_verified.json`; all candidates: `src/video_candidates.json`.
+- Public website: recipe pages show a tap-to-play thumbnail that loads the privacy-friendly youtube-nocookie player. Cook mode has a "Cook along with [channel]" bar whose player stays put while you move between steps.
+- Inside Claude: embedding is blocked, so the same spots link out to YouTube.
+- Every recipe also has "Watch on YouTube" and "More videos" (a YouTube search) as a fallback if a creator removes a video or turns off embedding.
+- Maintenance: every few months, re-run the vidIQ lookup on the IDs in `data5.js`. Any ID missing from the results has been removed; replace it from `video_candidates.json` or a new search.
+
 ## Workflow (trigger → generate → assemble → publish → track)
 1. **Trigger**: a request to add recipes, lessons, seasonings or features.
 2. **Generate**: research dishes on the web for popularity; write recipes in our own words in the data format below.
