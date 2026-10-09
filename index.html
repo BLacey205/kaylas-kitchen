@@ -1,0 +1,905 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Kayla's Kitchen: 50 Southern comfort classics with step-by-step cook mode, herbs and spices guide, cooking methods and lessons.">
+<meta name="theme-color" content="#2D5B44">
+<title>Kayla's Kitchen</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Corben:wght@400;700&family=DM+Mono:wght@400;500&family=Figtree:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: phone-first app shell. Gingham-tablecloth header, card lists, bottom tab bar, full-screen sheets for recipes and cook mode. */
+:root{
+  --bg:#F3F5EE; --surface:#FFFFFF; --surface-2:#E7ECE1; --ink:#1D2822; --muted:#56655C; --line:#D5DCCE;
+  --collard:#2D5B44; --on-collard:#FFFFFF; --cornmeal:#B98208; --cornmeal-soft:#F6E8C3; --pepper:#B3442C; --plum:#86476A; --good:#2F7D4F;
+  --ging:rgba(45,91,68,.15); --shadow:0 12px 32px rgba(20,35,27,.16);
+  --display:"Corben",Georgia,"Times New Roman",serif;
+  --body:"Figtree",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --mono:"DM Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#101713; --surface:#18211C; --surface-2:#222D27; --ink:#E6ECE3; --muted:#9BA89F; --line:#2D3A33;
+  --collard:#7DC19B; --on-collard:#0E1612; --cornmeal:#E7B43C; --cornmeal-soft:#37301F; --pepper:#E58066; --plum:#D69ABD; --good:#6FC793;
+  --ging:rgba(125,193,155,.13); --shadow:0 12px 32px rgba(0,0,0,.55); color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#101713; --surface:#18211C; --surface-2:#222D27; --ink:#E6ECE3; --muted:#9BA89F; --line:#2D3A33;
+  --collard:#7DC19B; --on-collard:#0E1612; --cornmeal:#E7B43C; --cornmeal-soft:#37301F; --pepper:#E58066; --plum:#D69ABD; --good:#6FC793;
+  --ging:rgba(125,193,155,.13); --shadow:0 12px 32px rgba(0,0,0,.55); color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.5;padding-bottom:calc(76px + env(safe-area-inset-bottom,0px))}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,input:focus-visible,a:focus-visible{outline:3px solid var(--cornmeal);outline-offset:2px}
+.wrap{max-width:780px;margin:0 auto;padding-inline:16px}
+h1,h2,h3{font-family:var(--display);font-weight:700;line-height:1.15;text-wrap:balance;margin:0}
+.eyebrow{font-size:11.5px;letter-spacing:.09em;text-transform:uppercase;font-weight:700;color:var(--muted)}
+.muted{color:var(--muted)}
+.mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+
+/* Header */
+.hero{background-color:var(--bg);background-image:repeating-linear-gradient(0deg,var(--ging) 0 14px,transparent 14px 28px),repeating-linear-gradient(90deg,var(--ging) 0 14px,transparent 14px 28px);border-bottom:1px solid var(--line)}
+.hero .wrap{padding-block:22px 20px}
+.plate{display:inline-flex;flex-direction:column;gap:2px;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px 18px;box-shadow:0 2px 0 var(--line)}
+.plate h1{font-size:28px;color:var(--collard)}
+.plate p{margin:0;color:var(--muted);font-size:13.5px}
+
+.section{display:grid;gap:14px;padding-block:20px 8px}
+.section-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.section-head h2{font-size:22px}
+
+/* Controls */
+.search{width:100%;padding:12px 14px;border:1px solid var(--line);border-radius:12px;background:var(--surface);color:var(--ink);font:inherit}
+.chips{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:none;border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:7px 13px;font-size:13.5px;font-weight:600;white-space:nowrap}
+.chip[aria-pressed="true"]{background:var(--collard);border-color:var(--collard);color:var(--on-collard)}
+.seg{display:grid;grid-template-columns:repeat(3,1fr);background:var(--surface-2);border-radius:12px;padding:4px;gap:4px}
+.seg button{border:0;background:transparent;border-radius:9px;padding:9px 6px;font-weight:600;font-size:14px}
+.seg button[aria-pressed="true"]{background:var(--surface);box-shadow:0 1px 3px rgba(0,0,0,.12)}
+
+/* Cards */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px}
+.card{display:grid;gap:6px;text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:13px 14px;min-width:0}
+.card:hover{border-color:var(--collard)}
+.card h3{font-size:16.5px}
+.card .meta{display:flex;gap:10px;align-items:center;flex-wrap:wrap;font-size:13px;color:var(--muted)}
+.cat{display:flex;align-items:center;gap:6px}
+.dot{width:8px;height:8px;border-radius:50%;flex:none;background:var(--muted)}
+.dot.Mains{background:var(--pepper)} .dot.Sides{background:var(--collard)} .dot.Breads{background:var(--cornmeal)} .dot.Desserts{background:var(--plum)} .dot.Drinks{background:var(--muted)}
+.diff{display:inline-flex;gap:2px;align-items:center}
+.diff i{width:4px;height:10px;border-radius:2px;background:var(--line);display:block}
+.diff i.on{background:var(--cornmeal)}
+.flags{display:flex;gap:6px;margin-left:auto}
+.flag{font-size:11.5px;font-weight:700;border-radius:6px;padding:1px 7px}
+.flag.cooked{background:var(--collard);color:var(--on-collard)}
+.flag.saved{border:1px solid var(--pepper);color:var(--pepper)}
+.empty{padding:22px;border:1px dashed var(--line);border-radius:12px;text-align:center;color:var(--muted)}
+
+.next{display:grid;gap:4px;background:var(--cornmeal-soft);border-radius:14px;padding:14px 16px;text-align:left;border:0}
+.next strong{font-family:var(--display);font-size:18px}
+
+/* Pills used for techniques and spices */
+.pills{display:flex;flex-wrap:wrap;gap:6px}
+.pill{border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:4px 10px;font-size:13px;font-weight:600}
+.pill.herb{border-color:var(--collard);color:var(--collard)}
+.pill.tech{border-color:var(--cornmeal);color:var(--ink);background:var(--cornmeal-soft)}
+.tag{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:2px 7px;border-radius:5px;background:var(--surface-2);color:var(--muted)}
+.tag.Herb{background:var(--collard);color:var(--on-collard)} .tag.Blend{background:var(--cornmeal-soft);color:var(--ink)}
+
+/* Bottom nav */
+.nav{position:fixed;left:0;right:0;bottom:0;z-index:10;background:var(--surface);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px)}
+.nav .wrap{display:grid;grid-template-columns:repeat(4,1fr)}
+.nav button{border:0;background:none;display:grid;justify-items:center;gap:2px;padding:9px 2px 10px;font-size:11.5px;font-weight:600;color:var(--muted)}
+.nav button svg{width:22px;height:22px}
+.nav button[aria-current="page"]{color:var(--collard)}
+
+/* Sheets */
+.sheet{position:fixed;inset:0;z-index:20;background:var(--bg);overflow-y:auto;overscroll-behavior:contain}
+.sheet-bar{position:sticky;top:0;z-index:2;background:var(--bg);border-bottom:1px solid var(--line);padding-top:env(safe-area-inset-top,0px)}
+.sheet-bar .wrap{display:flex;align-items:center;gap:10px;padding-block:10px}
+.iconbtn{border:1px solid var(--line);background:var(--surface);border-radius:10px;width:40px;height:40px;display:grid;place-items:center;flex:none}
+.iconbtn svg{width:20px;height:20px}
+.iconbtn[aria-pressed="true"]{color:var(--pepper);border-color:var(--pepper)}
+.sheet-bar .title{flex:1;min-width:0;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sheet-body{display:grid;gap:22px;padding-block:20px calc(40px + env(safe-area-inset-bottom,0px))}
+.sheet-body h1{font-size:30px}
+.facts{display:flex;flex-wrap:wrap;gap:8px}
+.fact{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:7px 11px;display:grid;font-size:13px}
+.fact b{font-family:var(--mono);font-weight:500;font-size:15px}
+.stepper{display:inline-flex;align-items:center;gap:6px}
+.stepper button{width:30px;height:30px;border-radius:8px;border:1px solid var(--line);background:var(--surface-2);font-weight:700}
+.tip{background:var(--cornmeal-soft);border-radius:12px;padding:14px 16px;display:grid;gap:4px}
+.tip p{margin:0}
+.block{display:grid;gap:10px}
+.block h2{font-size:19px}
+.ings{list-style:none;margin:0;padding:0;display:grid;border:1px solid var(--line);border-radius:12px;background:var(--surface);overflow:hidden}
+.ings li+li{border-top:1px solid var(--line)}
+.ings label{display:grid;grid-template-columns:22px 92px 1fr;gap:10px;align-items:start;padding:10px 12px;cursor:pointer}
+.ings input{width:18px;height:18px;margin:2px 0 0;accent-color:var(--collard)}
+.ings .amt{font-family:var(--mono);font-weight:500;font-variant-numeric:tabular-nums}
+.ings input:checked ~ span{text-decoration:line-through;color:var(--muted)}
+.steps{list-style:none;margin:0;padding:0;display:grid;gap:12px;counter-reset:s}
+.steps li{display:grid;grid-template-columns:30px 1fr;gap:12px;counter-increment:s}
+.steps li::before{content:counter(s);width:30px;height:30px;border-radius:50%;background:var(--collard);color:var(--on-collard);display:grid;place-items:center;font-weight:700;font-size:14px}
+.steps p{margin:0}
+.timerpill{display:inline-block;margin-top:4px;font-family:var(--mono);font-size:12.5px;border:1px solid var(--line);border-radius:6px;padding:1px 7px;color:var(--muted)}
+.btn{border:0;border-radius:12px;padding:14px 18px;font-weight:700;font-size:15.5px;background:var(--collard);color:var(--on-collard);text-align:center}
+.btn.ghost{background:var(--surface);color:var(--ink);border:1px solid var(--line)}
+.btn.small{padding:9px 13px;font-size:14px}
+.actions{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.actions .btn:first-child{grid-column:1/-1}
+
+/* Cook mode */
+.cook{position:fixed;inset:0;z-index:30;background:var(--bg);display:flex;flex-direction:column}
+.cook-top{border-bottom:1px solid var(--line);padding-top:env(safe-area-inset-top,0px)}
+.cook-top .wrap{display:flex;align-items:center;gap:10px;padding-block:10px}
+.bar{height:5px;background:var(--surface-2)}
+.bar span{display:block;height:100%;background:var(--cornmeal);transition:width .3s}
+.cook-main{flex:1;overflow-y:auto}
+.cook-main .wrap{display:grid;gap:18px;padding-block:22px}
+.cook-step{font-size:22px;line-height:1.45;font-weight:500;margin:0;max-width:34ch}
+.timer{display:grid;gap:10px;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px}
+.timer .big{font-family:var(--mono);font-size:46px;font-weight:500;line-height:1;font-variant-numeric:tabular-nums}
+.timer.done{border-color:var(--pepper)} .timer.done .big{color:var(--pepper)}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.mini{display:flex;gap:10px;align-items:center;justify-content:space-between;background:var(--cornmeal-soft);border:0;border-radius:10px;padding:9px 12px;width:100%;text-align:left;font-weight:600}
+.cook-foot{border-top:1px solid var(--line);background:var(--surface);padding-bottom:env(safe-area-inset-bottom,0px)}
+.cook-foot .wrap{display:grid;grid-template-columns:1fr 2fr;gap:10px;padding-block:12px}
+details.ingdrawer{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px 14px}
+details.ingdrawer summary{font-weight:700;cursor:pointer}
+details.ingdrawer ul{margin:8px 0 0;padding-left:18px}
+
+/* Learn */
+.level{display:grid;gap:10px;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px 16px}
+.level-head{display:flex;justify-content:space-between;gap:10px;align-items:baseline}
+.level h3{font-size:18px}
+.prog{height:6px;border-radius:3px;background:var(--surface-2);overflow:hidden}
+.prog span{display:block;height:100%;background:var(--collard)}
+.pathlist{display:flex;flex-wrap:wrap;gap:6px}
+.pathlist button{border:1px solid var(--line);background:var(--bg);border-radius:8px;padding:5px 10px;font-size:13px;font-weight:600}
+.pathlist button.done{background:var(--collard);border-color:var(--collard);color:var(--on-collard)}
+.lesson p{margin:0}
+.eli{font-size:17px;line-height:1.55;max-width:62ch}
+.points{margin:0;padding-left:20px;display:grid;gap:6px;max-width:62ch}
+.quiz{display:grid;gap:8px}
+.quiz button{text-align:left;border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:11px 13px;font-weight:600}
+.quiz button.right{border-color:var(--good);color:var(--good)}
+.quiz button.wrong{border-color:var(--pepper);color:var(--pepper)}
+.quiz .fb{font-weight:700}
+
+/* Spices */
+.spice h3{font-size:16.5px}
+.spice p{margin:0;font-size:13.5px;color:var(--muted)}
+.rank{display:grid;gap:8px}
+.rank button{display:grid;grid-template-columns:1fr auto;gap:2px 10px;text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:11px 14px}
+.rank b{font-family:var(--display);font-size:16px}
+.rank small{grid-column:1/-1;color:var(--muted);font-size:13px}
+.dish{display:grid;gap:8px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.dish > button{border:0;background:none;padding:0;text-align:left;font-family:var(--display);font-weight:700;font-size:16px}
+
+/* Kitchen */
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.stat{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px;display:grid;gap:2px}
+.stat b{font-family:var(--mono);font-size:24px;font-weight:500}
+.stat span{font-size:12.5px;color:var(--muted)}
+.shop{list-style:none;margin:0;padding:0;border:1px solid var(--line);border-radius:12px;background:var(--surface);overflow:hidden}
+.shop li{display:grid;grid-template-columns:22px 1fr auto;gap:10px;align-items:start;padding:10px 12px}
+.shop li+li{border-top:1px solid var(--line)}
+.shop input{width:18px;height:18px;margin:2px 0 0;accent-color:var(--collard)}
+.shop small{display:block;color:var(--muted);font-size:12px}
+.shop input:checked + label{text-decoration:line-through;color:var(--muted)}
+.shop .x{border:0;background:none;color:var(--muted);font-size:20px;line-height:1;padding:0 4px}
+.copyfall{width:100%;min-height:140px;font-family:var(--mono);font-size:13px;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--ink);padding:10px}
+
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(90px + env(safe-area-inset-bottom,0px));z-index:40;background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:10px;font-weight:600;font-size:14px;box-shadow:var(--shadow);max-width:calc(100% - 32px)}
+@media (max-width:420px){.ings label{grid-template-columns:22px 78px 1fr}.cook-step{font-size:20px}.timer .big{font-size:40px}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+<style>:root{padding-top:env(safe-area-inset-top,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+</head>
+<body>
+
+
+<header class="hero" id="hero">
+  <div class="wrap">
+    <div class="plate">
+      <h1>Kayla's Kitchen</h1>
+      <p>50 Southern comfort classics, taught step by step</p>
+    </div>
+  </div>
+</header>
+<main id="main" class="wrap"></main>
+
+<nav class="nav" aria-label="Sections">
+  <div class="wrap">
+    <button data-act="tab" data-id="recipes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5z"/><path d="M4 20.5A2.5 2.5 0 0 0 6.5 23H20"/><path d="M9 8h7M9 11.5h5"/></svg>Recipes</button>
+    <button data-act="tab" data-id="spices"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 19c0-8 5-14 15-15-1 10-7 15-15 15z"/><path d="M5 19 13 11"/></svg>Herbs &amp; Spices</button>
+    <button data-act="tab" data-id="learn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 9l10-5 10 5-10 5z"/><path d="M6 11v5c3 2.5 9 2.5 12 0v-5"/></svg>Learn</button>
+    <button data-act="tab" data-id="kitchen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/><path d="M10 20v-5h4v5"/></svg>My Kitchen</button>
+  </div>
+</nav>
+
+<div id="sheet" class="sheet" hidden></div>
+<div id="cook" class="cook" hidden></div>
+<div id="toast" class="toast" hidden role="status"></div>
+
+<script>
+const RECIPES = [
+{id:"fried-chicken",n:"Southern Fried Chicken",c:"Mains",p:"chicken",d:3,t:75,s:4,w:"Brine 4 hrs or overnight",k:["dredge","fry","castiron"],sp:["black-pepper","cayenne","paprika","garlic-powder","onion-powder"],
+tip:"Let the oil climb back to temperature between batches. A crowded pan drops the heat and gives you greasy chicken.",
+i:[[1,"","whole chicken (3–4 lb), cut into 8 pieces"],[2,"cup","buttermilk"],[2,"tbsp","hot sauce"],[1,"tbsp","kosher salt, divided"],[2,"cup","all-purpose flour"],[1,"tbsp","paprika"],[2,"tsp","garlic powder"],[1,"tsp","onion powder"],[1,"tsp","black pepper"],[0.5,"tsp","cayenne"],[6,"cup","peanut or vegetable oil, for frying"]],
+st:[["Stir the buttermilk, hot sauce and half the salt together. Submerge the chicken, cover and chill at least 4 hours or overnight.",0],["Whisk the flour, paprika, garlic powder, onion powder, black pepper, cayenne and the rest of the salt in a wide dish.",0],["Lift each piece from the buttermilk, let the extra drip off, and press it firmly into the flour on all sides. Rest the pieces on a rack so the coating sets.",15],["Heat the oil in a deep cast-iron skillet or Dutch oven to 325–350°F.",10],["Fry the dark meat first, a few pieces at a time, turning every few minutes, until deep golden and 175°F inside.",13],["Fry the white meat until it reads 165°F inside. Drain on a wire rack, not paper towels, so the bottom stays crisp.",11]]},
+
+{id:"chicken-dumplings",n:"Chicken and Dumplings",c:"Mains",p:"chicken",d:2,t:90,s:6,k:["biscuit"],sp:["bay","black-pepper","thyme"],
+tip:"Drop the dumplings into broth at a rolling boil so they firm up fast, then lower to a simmer so they don't fall apart.",
+i:[[3,"lb","bone-in chicken thighs and breasts"],[10,"cup","water"],[1,"","onion, quartered"],[2,"","celery ribs, chopped"],[2,"","carrots, sliced"],[2,"","bay leaves"],[2,"tsp","kosher salt"],[1,"tsp","black pepper"],[2,"cup","all-purpose flour (dumplings)"],[1,"tsp","baking powder"],[0.5,"tsp","salt (dumplings)"],[4,"tbsp","cold butter"],[0.75,"cup","buttermilk"]],
+st:[["Put the chicken, water, onion, celery, carrots, bay leaves, salt and pepper in a big pot. Cover and simmer.",45],["Lift out the chicken and let it cool. Shred the meat and throw away the skin and bones. Fish out the onion and bay leaves.",0],["For the dumplings, whisk the flour, baking powder and salt. Rub in the cold butter with your fingers, then stir in the buttermilk to make a stiff dough.",0],["Roll the dough on a floured counter about ⅛ inch thick and cut it into 1×2-inch strips.",0],["Bring the broth to a rolling boil. Drop the strips in one at a time, stirring gently.",0],["Lower to a simmer, add the chicken back, and cook until the dumplings are cooked through and the broth thickens.",18]]},
+
+{id:"shrimp-grits",n:"Shrimp and Grits",c:"Mains",p:"seafood",d:2,t:50,s:4,k:["grits","castiron"],sp:["cajun","garlic","green-onion"],
+tip:"Pull the shrimp the moment they curl into a C. An O shape means overcooked.",
+i:[[1,"cup","stone-ground grits"],[4,"cup","water or chicken stock"],[1,"tsp","salt"],[1,"cup","sharp cheddar, shredded"],[2,"tbsp","butter"],[4,"slice","bacon, chopped"],[1,"lb","large shrimp, peeled and deveined"],[1,"tsp","Cajun seasoning"],[3,"","garlic cloves, minced"],[0.5,"cup","chicken stock (sauce)"],[1,"tbsp","lemon juice"],[3,"","green onions, sliced"]],
+st:[["Bring the water and salt to a boil. Whisk in the grits slowly, then simmer on low, stirring often, until thick and creamy.",35],["Stir in the butter and cheese. Cover and keep warm.",0],["Cook the bacon in a skillet until crisp. Lift it out and leave the fat in the pan.",6],["Toss the shrimp with Cajun seasoning. Sear in the bacon fat 1–2 minutes per side until pink, then add the garlic for 30 seconds.",3],["Pour in the stock and lemon juice, scrape up the browned bits, simmer 1 minute and stir the bacon back in.",1],["Spoon the shrimp and pan sauce over the grits and top with green onions.",0]]},
+
+{id:"chicken-fried-steak",n:"Chicken-Fried Steak",c:"Mains",p:"beef",d:2,t:40,s:4,k:["dredge","fry","gravy"],sp:["black-pepper","garlic-powder","paprika"],
+tip:"Be generous with black pepper in the cream gravy. It should look speckled.",
+i:[[4,"","cube steaks (about 4 oz each)"],[1.5,"cup","all-purpose flour"],[1,"tsp","salt"],[1,"tsp","black pepper"],[1,"tsp","garlic powder"],[0.5,"tsp","paprika"],[2,"","eggs"],[1,"cup","milk"],[1,"cup","vegetable oil"],[3,"tbsp","flour (gravy)"],[2,"cup","whole milk (gravy)"]],
+st:[["Season the flour with salt, pepper, garlic powder and paprika. Whisk the eggs with 1 cup milk in another dish.",0],["Dredge each steak in flour, then egg, then flour again, pressing hard. Let them rest.",10],["Heat ½ inch of oil in a cast-iron skillet to 350°F. Fry the steaks 3–4 minutes per side until golden. Drain on a rack.",8],["Pour off all but 3 tablespoons of oil, keeping the browned bits. Whisk in the 3 tablespoons flour and cook 1–2 minutes.",2],["Slowly whisk in 2 cups milk. Simmer until thick, then season with plenty of pepper.",4],["Serve the steaks smothered in gravy.",0]]},
+
+{id:"smothered-pork-chops",n:"Smothered Pork Chops",c:"Mains",p:"pork",d:2,t:60,s:4,k:["dredge","roux","braise"],sp:["black-pepper","garlic-powder","garlic","thyme"],
+tip:"Don't wash out the skillet after browning. Those stuck-on bits are the flavor of the gravy.",
+i:[[4,"","bone-in pork chops, ¾ inch thick"],[1,"tsp","salt"],[1,"tsp","black pepper"],[1,"tsp","garlic powder"],[0.5,"cup","all-purpose flour"],[3,"tbsp","vegetable oil"],[1,"","large onion, sliced"],[2,"","garlic cloves, minced"],[2,"cup","chicken stock"],[0.5,"cup","heavy cream"]],
+st:[["Season the chops and dredge them in flour. Save 2 tablespoons of the flour.",0],["Brown the chops in the oil 3–4 minutes per side, then set them aside.",8],["Cook the onion until soft, then add the garlic.",6],["Sprinkle in the saved flour and stir to make a light roux.",2],["Whisk in the stock, scraping the pan. Nestle the chops back in, cover and simmer on low until tender.",30],["Stir in the cream, simmer 2 minutes and spoon the gravy over the chops.",2]]},
+
+{id:"meatloaf",n:"Southern Meatloaf",c:"Mains",p:"beef",d:1,t:75,s:6,k:[],sp:["black-pepper","onion-powder"],
+tip:"Mix with your hands only until combined. Overmixing makes a dense, tough loaf.",
+i:[[2,"lb","ground beef (80/20)"],[1,"","onion, finely chopped"],[2,"","eggs"],[0.75,"cup","crushed saltine crackers"],[0.5,"cup","milk"],[2,"tbsp","Worcestershire sauce"],[1.5,"tsp","salt"],[1,"tsp","black pepper"],[0.75,"cup","ketchup (glaze)"],[3,"tbsp","brown sugar"],[1,"tbsp","apple cider vinegar"]],
+st:[["Heat the oven to 350°F and line a sheet pan.",0],["Soak the crackers in the milk.",5],["Add the beef, onion, eggs, Worcestershire, salt and pepper. Mix with your hands just until combined, and shape a loaf about 9×5 inches on the pan.",0],["Stir the ketchup, brown sugar and vinegar together. Brush half over the loaf.",0],["Bake 45 minutes, brush on the rest of the glaze, and bake 15 minutes more until 160°F inside.",60],["Rest before slicing.",10]]},
+
+{id:"pulled-pork",n:"Carolina Pulled Pork",c:"Mains",p:"pork",d:2,t:480,s:10,w:"Rub rests 1 hr+",k:["lowslow"],sp:["paprika","cayenne","black-pepper","garlic-powder","red-pepper-flakes"],
+tip:"Cook to temperature and feel, not the clock. It's ready when a fork twists in with no resistance.",
+i:[[6,"lb","bone-in pork shoulder (Boston butt)"],[2,"tbsp","brown sugar"],[2,"tbsp","paprika"],[1,"tbsp","kosher salt"],[1,"tbsp","black pepper"],[2,"tsp","garlic powder"],[1,"tsp","cayenne"],[1,"cup","apple cider vinegar"],[0.5,"cup","water"],[1,"tbsp","red pepper flakes"],[1,"tbsp","sugar"]],
+st:[["Mix the brown sugar, paprika, salt, pepper, garlic powder and cayenne. Rub it all over the pork and let it sit.",60],["Set a smoker or oven to 250°F. Cook fat side up until 195–203°F inside, about 1½ hours per pound.",480],["Stir the vinegar, water, pepper flakes, sugar and 1 teaspoon salt for a Carolina vinegar sauce.",0],["Wrap the pork loosely and rest it.",30],["Pull the meat into shreds, discarding fat and bone, and toss with some of the sauce.",0],["Serve on soft buns with coleslaw on top.",0]]},
+
+{id:"gumbo",n:"Chicken and Sausage Gumbo",c:"Mains",p:"chicken",d:3,t:150,s:8,k:["roux","trinity"],sp:["cajun","thyme","bay","garlic","green-onion","file"],
+tip:"Have the trinity chopped before you start the roux. Once the roux is dark you can't walk away.",
+i:[[0.75,"cup","vegetable oil"],[0.75,"cup","all-purpose flour"],[1,"","large onion, diced"],[1,"","green bell pepper, diced"],[3,"","celery ribs, diced"],[4,"","garlic cloves, minced"],[1,"lb","andouille sausage, sliced"],[2,"lb","boneless chicken thighs, cut up"],[8,"cup","chicken stock"],[2,"","bay leaves"],[2,"tsp","Cajun seasoning"],[1,"tsp","dried thyme"],[3,"","green onions, sliced"],[4,"cup","cooked white rice"]],
+st:[["Brown the sausage in a heavy pot and set it aside. Season and brown the chicken and set it aside.",10],["Add the oil, whisk in the flour and stir constantly on medium-low until the roux is the color of milk chocolate.",40],["Add the onion, bell pepper and celery. This stops the roux from browning. Cook until soft, then add the garlic.",6],["Slowly whisk in the stock. Add the bay leaves, Cajun seasoning, thyme and the meats.",0],["Simmer uncovered, skimming off fat now and then. Taste and season.",60],["Remove the bay leaves. Serve over rice with green onions, and a pinch of filé if you have it.",0]]},
+
+{id:"red-beans-rice",n:"Red Beans and Rice",c:"Mains",p:"pork",d:2,t:180,s:8,w:"Soak beans overnight",k:["trinity"],sp:["cajun","thyme","bay","garlic"],
+tip:"Mash some beans against the side of the pot near the end. That's what makes them creamy.",
+i:[[1,"lb","dried red kidney beans, soaked overnight"],[1,"lb","andouille or smoked sausage, sliced"],[1,"","smoked ham hock"],[1,"","onion, diced"],[1,"","green bell pepper, diced"],[2,"","celery ribs, diced"],[4,"","garlic cloves, minced"],[8,"cup","water or stock"],[2,"","bay leaves"],[1,"tsp","dried thyme"],[1,"tsp","Cajun seasoning"],[4,"cup","cooked white rice"]],
+st:[["Drain the soaked beans.",0],["Brown the sausage and set it aside. Cook the onion, pepper and celery in the fat, then add the garlic.",10],["Add the beans, ham hock, water, bay leaves, thyme and Cajun seasoning. Boil, then simmer partly covered until the beans are creamy.",150],["Mash about a cup of beans against the side of the pot to thicken.",0],["Add the sausage back, pull the meat off the ham hock and stir it in. Simmer.",20],["Season and serve over rice with hot sauce.",0]]},
+
+{id:"jambalaya",n:"Jambalaya",c:"Mains",p:"seafood",d:2,t:75,s:6,k:["trinity"],sp:["cajun","garlic","green-onion"],
+tip:"Once the lid goes on, leave it on. Lifting it lets the steam out and the rice cooks unevenly.",
+i:[[2,"tbsp","vegetable oil"],[12,"oz","andouille sausage, sliced"],[1,"lb","chicken thighs, cubed"],[1,"","onion, diced"],[1,"","green bell pepper, diced"],[2,"","celery ribs, diced"],[3,"","garlic cloves, minced"],[1,"can","(14 oz) diced tomatoes"],[2,"cup","long-grain white rice"],[3.5,"cup","chicken stock"],[2,"tsp","Cajun seasoning"],[1,"lb","shrimp, peeled"],[3,"","green onions, sliced"]],
+st:[["Brown the sausage, then the chicken, in the oil. Set the meat aside.",10],["Cook the onion, pepper and celery, then the garlic.",7],["Stir in the rice to coat it, then add the tomatoes, stock, Cajun seasoning and meats. Bring to a boil.",2],["Cover, turn the heat to low and cook without lifting the lid.",20],["Lay the shrimp on top, cover again and cook until pink and the rice is tender.",6],["Fluff and stir in the green onions.",0]]},
+
+{id:"fried-catfish",n:"Fried Catfish",c:"Mains",p:"seafood",d:1,t:35,s:4,k:["dredge","fry"],sp:["cajun"],
+tip:"Fine cornmeal gives a lighter, crispier crust than coarse.",
+i:[[4,"","catfish fillets"],[1,"cup","buttermilk"],[1,"tsp","hot sauce"],[1,"cup","fine yellow cornmeal"],[0.25,"cup","all-purpose flour"],[2,"tsp","Cajun seasoning"],[1,"tsp","salt"],[4,"cup","oil for frying"],[1,"","lemon, cut in wedges"]],
+st:[["Soak the fillets in buttermilk and hot sauce.",15],["Mix the cornmeal, flour, Cajun seasoning and salt.",0],["Heat the oil to 350°F.",10],["Dredge each fillet in the cornmeal mix and press it on.",0],["Fry two at a time until golden and the fish flakes.",5],["Drain on a rack, salt right away and serve with lemon.",0]]},
+
+{id:"pot-roast",n:"Southern Pot Roast",c:"Mains",p:"beef",d:1,t:240,s:6,k:["braise"],sp:["thyme","black-pepper","garlic"],
+tip:"Chuck roast is the right cut. Its fat and connective tissue melt into tender meat over long cooking.",
+i:[[3.5,"lb","beef chuck roast"],[2,"tsp","salt"],[1,"tsp","black pepper"],[2,"tbsp","vegetable oil"],[1,"","onion, cut in wedges"],[3,"","garlic cloves"],[2,"tbsp","tomato paste"],[2,"cup","beef stock"],[1,"tbsp","Worcestershire sauce"],[2,"sprig","fresh thyme"],[1.5,"lb","small potatoes"],[4,"","carrots, cut in chunks"]],
+st:[["Heat the oven to 300°F. Season the roast all over.",0],["Sear the roast in a Dutch oven on all sides and set it aside.",10],["Cook the onion, then the garlic and tomato paste for 1 minute.",4],["Add the stock, Worcestershire and thyme, scrape the pot, return the roast, cover and bake.",120],["Add the potatoes and carrots and bake until everything is fork-tender.",75],["Rest the roast before slicing.",10]]},
+
+{id:"nashville-hot",n:"Nashville Hot Chicken",c:"Mains",p:"chicken",d:3,t:75,s:4,k:["dredge","fry"],sp:["cayenne","paprika","smoked-paprika","garlic-powder","black-pepper"],
+tip:"Ladle the hot oil into the spice paste carefully. It sizzles and blooms the cayenne, and that's the whole point.",
+i:[[2,"lb","chicken tenders or boneless thighs"],[1,"cup","buttermilk"],[1,"tbsp","hot sauce"],[2,"cup","all-purpose flour"],[2,"tsp","salt"],[1,"tsp","black pepper"],[4,"cup","oil for frying"],[2,"tbsp","cayenne pepper"],[1,"tbsp","brown sugar"],[1,"tsp","smoked paprika"],[0.5,"tsp","garlic powder"],[4,"slice","white bread"],[1,"cup","dill pickle chips"]],
+st:[["Marinate the chicken in buttermilk and hot sauce.",60],["Dredge in flour seasoned with salt and pepper, then let it rest.",10],["Fry at 350°F until 165°F inside.",7],["Whisk the cayenne, brown sugar, smoked paprika and garlic powder in a heatproof bowl. Carefully ladle in ½ cup of the hot frying oil.",0],["Brush the spicy paste all over the hot chicken.",0],["Serve on white bread with pickles.",0]]},
+
+{id:"smothered-chicken",n:"Smothered Chicken",c:"Mains",p:"chicken",d:2,t:75,s:4,k:["dredge","roux","braise"],sp:["poultry","black-pepper","garlic"],
+tip:"Cook the flour in the drippings until it's the color of peanut butter for a deeper gravy.",
+i:[[8,"","bone-in chicken thighs"],[2,"tsp","poultry seasoning"],[1,"tsp","salt"],[1,"tsp","black pepper"],[0.5,"cup","all-purpose flour"],[0.25,"cup","vegetable oil"],[1,"","onion, sliced"],[1,"","green bell pepper, sliced"],[3,"","garlic cloves, minced"],[2.5,"cup","chicken stock"]],
+st:[["Season the chicken and dredge it in flour. Save 3 tablespoons of the flour.",0],["Brown the chicken, skin side down first, about 5 minutes a side. Set aside.",10],["Cook the onion and pepper until soft, then add the garlic.",6],["Sprinkle in the saved flour and stir into a light brown roux.",3],["Whisk in the stock, return the chicken, cover and simmer.",40],["Uncover to let the gravy thicken, then serve over rice.",5]]},
+
+{id:"chicken-pot-pie",n:"Chicken Pot Pie",c:"Mains",p:"chicken",d:2,t:80,s:6,k:["roux"],sp:["thyme","black-pepper"],
+tip:"Let the pie rest before cutting so the filling sets instead of running.",
+i:[[6,"tbsp","butter"],[1,"","onion, diced"],[2,"","carrots, diced"],[2,"","celery ribs, diced"],[0.33,"cup","all-purpose flour"],[1.75,"cup","chicken stock"],[0.75,"cup","milk"],[3,"cup","cooked chicken, shredded"],[1,"cup","frozen peas"],[1,"tsp","dried thyme"],[1,"tsp","salt"],[2,"","9-inch pie crusts"],[1,"","egg, beaten (for wash)"]],
+st:[["Heat the oven to 400°F.",0],["Melt the butter and cook the onion, carrots and celery.",6],["Stir in the flour for 2 minutes, then whisk in the stock and milk. Simmer until thick.",6],["Stir in the chicken, peas, thyme and salt.",0],["Line a pie dish with one crust, add the filling, top with the second crust, crimp, cut vents and brush with egg.",0],["Bake until deep golden.",38],["Rest before serving.",15]]},
+
+{id:"etouffee",n:"Crawfish Étouffée",c:"Mains",p:"seafood",d:3,t:60,s:6,k:["roux","trinity"],sp:["cajun","garlic","green-onion"],
+tip:"Étouffée uses a blond roux, lighter than gumbo's. Stop when it looks like peanut butter.",
+i:[[0.5,"cup","butter"],[0.5,"cup","all-purpose flour"],[1,"","onion, diced"],[1,"","green bell pepper, diced"],[2,"","celery ribs, diced"],[3,"","garlic cloves, minced"],[2,"cup","seafood or chicken stock"],[1,"can","(14 oz) diced tomatoes"],[2,"tsp","Cajun seasoning"],[2,"lb","crawfish tails (or peeled shrimp)"],[3,"","green onions, sliced"],[4,"cup","cooked white rice"]],
+st:[["Melt the butter, whisk in the flour and stir until it's the color of peanut butter.",12],["Add the onion, pepper and celery, then the garlic.",6],["Whisk in the stock a little at a time. Add the tomatoes and Cajun seasoning and simmer.",20],["Add the crawfish and simmer until heated through.",6],["Stir in the green onions, taste for salt, and serve over rice.",0]]},
+
+{id:"oxtails",n:"Smothered Oxtails",c:"Mains",p:"beef",d:2,t:240,s:6,k:["braise"],sp:["allspice","thyme","black-pepper","garlic"],
+tip:"Brown the oxtails in batches with space between them. Crowded meat steams instead of browning.",
+i:[[3,"lb","oxtails"],[2,"tsp","salt"],[1,"tsp","black pepper"],[1,"tsp","ground allspice"],[2,"tbsp","vegetable oil"],[1,"","onion, chopped"],[4,"","garlic cloves, minced"],[2,"tbsp","tomato paste"],[4,"cup","beef stock"],[2,"tbsp","Worcestershire sauce"],[3,"sprig","fresh thyme"],[1,"can","(15 oz) butter beans, drained"],[1,"tbsp","cornstarch mixed with 2 tbsp water"]],
+st:[["Season the oxtails with salt, pepper and allspice.",0],["Brown them in batches and set aside.",10],["Cook the onion, then the garlic and tomato paste.",5],["Return the meat, add stock, Worcestershire and thyme. Cover and simmer low until the meat falls off the bone.",180],["Add the butter beans and cornstarch slurry and simmer until the gravy thickens. Serve over rice.",10]]},
+
+{id:"salmon-croquettes",n:"Salmon Croquettes",c:"Mains",p:"seafood",d:1,t:30,s:4,k:["fry","castiron"],sp:["old-bay","black-pepper"],
+tip:"Chilling the patties before frying helps them hold together.",
+i:[[2,"can","(14.75 oz) salmon, drained, skin and large bones removed"],[2,"","eggs"],[0.5,"cup","crushed saltine crackers"],[0.25,"cup","yellow cornmeal"],[0.5,"","onion, grated"],[1,"tsp","Old Bay seasoning"],[0.5,"tsp","black pepper"],[0.5,"cup","vegetable oil"]],
+st:[["Flake the salmon into a bowl.",0],["Mix in the eggs, crackers, cornmeal, onion, Old Bay and pepper.",0],["Shape 8 patties and chill them.",10],["Heat the oil in a skillet over medium heat.",3],["Fry until golden, 3–4 minutes per side.",7],["Drain and serve with grits or tartar sauce.",0]]},
+
+{id:"lowcountry-boil",n:"Lowcountry Boil",c:"Mains",p:"seafood",d:1,t:60,s:8,k:[],sp:["old-bay","bay"],
+tip:"Add everything in order of how long it takes to cook, so the shrimp go in last.",
+i:[[16,"cup","water"],[0.5,"cup","Old Bay seasoning"],[2,"","lemons, halved"],[1,"","onion, quartered"],[2,"lb","small red potatoes"],[1,"lb","smoked sausage, cut in 2-inch pieces"],[6,"","ears corn, halved"],[3,"lb","shell-on large shrimp"],[0.5,"cup","butter, melted"]],
+st:[["Bring the water, Old Bay, lemons and onion to a boil in a big pot.",10],["Add the potatoes and boil.",10],["Add the sausage and corn and boil.",8],["Add the shrimp and cook until pink, then turn off the heat.",3],["Drain, pour it all onto a paper-lined table, drizzle with butter and sprinkle on more Old Bay.",0]]},
+
+{id:"shrimp-po-boy",n:"Shrimp Po' Boy",c:"Mains",p:"seafood",d:2,t:40,s:4,k:["dredge","fry"],sp:["cajun"],
+tip:"Use light, crackly French bread. A dense roll fights the shrimp.",
+i:[[1,"lb","medium shrimp, peeled"],[1,"cup","buttermilk"],[1,"cup","yellow cornmeal"],[0.5,"cup","all-purpose flour"],[2,"tsp","Cajun seasoning"],[4,"cup","oil for frying"],[4,"","French bread rolls"],[0.5,"cup","mayonnaise"],[1,"tbsp","Creole mustard"],[1,"tsp","hot sauce"],[2,"cup","shredded lettuce"],[2,"","tomatoes, sliced"],[0.5,"cup","dill pickle chips"]],
+st:[["Soak the shrimp in buttermilk.",10],["Mix the cornmeal, flour and Cajun seasoning.",0],["Heat the oil to 350°F.",10],["Dredge the shrimp and fry in batches until golden.",2],["Stir the mayo, mustard and hot sauce into a quick sauce.",0],["Split and toast the rolls, spread the sauce and pile on lettuce, tomato, pickles and shrimp.",0]]},
+
+{id:"mac-cheese",n:"Baked Mac and Cheese",c:"Sides",p:"eggs",d:2,t:60,s:8,k:["roux","custard"],sp:["smoked-paprika","black-pepper"],
+tip:"Pull the pasta 2 minutes early. It keeps cooking in the oven and stays firm instead of mushy.",
+i:[[1,"lb","elbow macaroni"],[4,"tbsp","butter"],[0.25,"cup","all-purpose flour"],[3,"cup","whole milk"],[1,"can","(12 oz) evaporated milk"],[1,"lb","sharp cheddar, shredded"],[8,"oz","Colby Jack, shredded"],[2,"","eggs, beaten"],[1,"tsp","salt"],[0.5,"tsp","black pepper"],[1,"tsp","smoked paprika"]],
+st:[["Heat the oven to 350°F and grease a 9×13 dish.",0],["Boil the macaroni 2 minutes less than the package says and drain.",7],["Melt the butter, whisk in the flour for 1 minute, then whisk in both milks. Simmer until thickened.",6],["Off the heat, stir in salt, pepper and all but 1 cup of cheese until melted. Whisk a ladle of sauce into the eggs, then stir the eggs back in.",0],["Fold in the pasta, pour into the dish, and top with the saved cheese and paprika.",0],["Bake until bubbly.",30],["Rest before scooping so it sets.",10]]},
+
+{id:"collard-greens",n:"Collard Greens",c:"Sides",p:"veg",d:1,t:120,s:6,k:["potliquor"],sp:["red-pepper-flakes","garlic"],
+tip:"Save the pot liquor. It's the best part, and it's what the cornbread is for.",
+i:[[2,"lb","collard greens"],[1,"","smoked turkey wing or ham hock"],[6,"cup","chicken stock"],[1,"","onion, diced"],[3,"","garlic cloves, minced"],[2,"tbsp","apple cider vinegar"],[1,"tbsp","sugar"],[1,"tsp","red pepper flakes"],[1,"tsp","salt"]],
+st:[["Simmer the smoked meat in the stock to build a rich pot liquor.",45],["Wash the greens in a sink of water three times until no grit is left. Strip the stems, roll the leaves and slice into ribbons.",0],["Add the onion, garlic, greens (in handfuls as they wilt), vinegar, sugar and pepper flakes.",0],["Cover and simmer until silky and tender.",50],["Pull the meat from the bone back into the pot. Season and serve with cornbread.",0]]},
+
+{id:"candied-yams",n:"Candied Yams",c:"Sides",p:"veg",d:1,t:75,s:8,k:[],sp:["cinnamon","nutmeg","vanilla"],
+tip:"Baste the potatoes with the syrup when you uncover them so every slice gets glazed.",
+i:[[4,"lb","sweet potatoes, peeled, cut in ½-inch slices"],[0.5,"cup","butter"],[1,"cup","brown sugar"],[0.25,"cup","white sugar"],[1,"tsp","cinnamon"],[0.5,"tsp","nutmeg"],[1,"tsp","vanilla"],[0.25,"tsp","salt"]],
+st:[["Heat the oven to 350°F and layer the sweet potatoes in a 9×13 dish.",0],["Melt the butter with both sugars, the spices and salt, and simmer. Stir in the vanilla off the heat.",3],["Pour the syrup over the potatoes, cover with foil and bake.",40],["Uncover, baste, and bake until the syrup is thick and glossy.",22]]},
+
+{id:"fried-okra",n:"Fried Okra",c:"Sides",p:"veg",d:1,t:30,s:4,k:["dredge","fry"],sp:["cayenne","black-pepper"],
+tip:"The buttermilk soak and a hot pan keep okra crisp, not slimy.",
+i:[[1,"lb","fresh okra, cut in ½-inch slices"],[1,"cup","buttermilk"],[1,"cup","yellow cornmeal"],[0.25,"cup","all-purpose flour"],[1,"tsp","salt"],[0.5,"tsp","black pepper"],[0.25,"tsp","cayenne"],[3,"cup","oil for frying"]],
+st:[["Toss the okra in buttermilk.",10],["Mix the cornmeal, flour, salt, pepper and cayenne.",0],["Heat 1 inch of oil in a cast-iron skillet to 375°F.",8],["Lift the okra out and toss it in the cornmeal.",0],["Fry in batches until golden and salt right away.",4]]},
+
+{id:"hoppin-john",n:"Hoppin' John",c:"Sides",p:"veg",d:1,t:90,s:6,k:["trinity"],sp:["bay","red-pepper-flakes","garlic"],
+tip:"Eat it on New Year's Day with greens and cornbread for luck and money in the year ahead.",
+i:[[1,"lb","dried black-eyed peas, rinsed"],[4,"slice","bacon, chopped"],[1,"","onion, diced"],[1,"","green bell pepper, diced"],[2,"","celery ribs, diced"],[3,"","garlic cloves, minced"],[6,"cup","chicken stock"],[1,"","bay leaf"],[1,"tsp","salt"],[0.5,"tsp","red pepper flakes"],[3,"cup","cooked long-grain rice"]],
+st:[["Cook the bacon until crisp and set it aside.",6],["Cook the onion, pepper and celery in the fat, then the garlic.",6],["Add the peas, stock, bay leaf and pepper flakes. Simmer until tender.",60],["Stir in the rice and bacon, season with salt and serve.",0]]},
+
+{id:"fried-green-tomatoes",n:"Fried Green Tomatoes",c:"Sides",p:"veg",d:1,t:30,s:4,k:["dredge","fry"],sp:["black-pepper"],
+tip:"Salting the slices first pulls out water so the coating stays crisp.",
+i:[[3,"","firm green tomatoes, cut in ¼-inch slices"],[1,"tsp","salt"],[0.5,"cup","all-purpose flour"],[2,"","eggs"],[0.5,"cup","buttermilk"],[1,"cup","yellow cornmeal"],[0.5,"cup","panko breadcrumbs"],[0.5,"tsp","black pepper"],[1,"cup","vegetable oil"]],
+st:[["Salt the slices, rest them on a rack, then pat dry.",10],["Set out three dishes: flour; eggs whisked with buttermilk; cornmeal mixed with panko and pepper.",0],["Dredge each slice through all three.",0],["Heat ½ inch of oil to 350°F and fry 2–3 minutes per side.",5],["Drain and serve with remoulade or pimento cheese.",0]]},
+
+{id:"potato-salad",n:"Southern Potato Salad",c:"Sides",p:"eggs",d:1,t:45,s:8,w:"Chill 1 hr",k:[],sp:["paprika","black-pepper","celery-seed"],
+tip:"Dress the potatoes while still a little warm so they soak up the flavor.",
+i:[[3,"lb","russet potatoes, peeled and cubed"],[4,"","hard-boiled eggs, chopped"],[1,"cup","mayonnaise"],[2,"tbsp","yellow mustard"],[0.33,"cup","sweet pickle relish"],[0.5,"cup","celery, diced"],[0.25,"cup","onion, minced"],[1,"tsp","salt"],[0.5,"tsp","black pepper"],[0.5,"tsp","celery seed"],[1,"tsp","paprika"]],
+st:[["Boil the potatoes in salted water until fork-tender. Drain and let them cool a bit.",12],["Mix the mayo, mustard, relish, salt, pepper and celery seed.",0],["Fold in the potatoes, eggs, celery and onion.",0],["Chill, then dust with paprika before serving.",60]]},
+
+{id:"coleslaw",n:"Creamy Coleslaw",c:"Sides",p:"veg",d:1,t:15,s:8,w:"Chill 30 min",k:[],sp:["celery-seed","black-pepper"],
+tip:"Celery seed is the secret ingredient in classic Southern slaw.",
+i:[[1,"","head green cabbage, finely shredded"],[1,"","carrot, grated"],[0.75,"cup","mayonnaise"],[2,"tbsp","apple cider vinegar"],[2,"tbsp","sugar"],[1,"tsp","celery seed"],[0.5,"tsp","salt"],[0.25,"tsp","black pepper"]],
+st:[["Whisk the mayo, vinegar, sugar, celery seed, salt and pepper.",0],["Toss the cabbage and carrot with the dressing.",0],["Chill so the flavors come together.",30]]},
+
+{id:"cornbread-dressing",n:"Cornbread Dressing",c:"Sides",p:"veg",d:2,t:90,s:10,k:["castiron"],sp:["sage","poultry","black-pepper"],
+tip:"Day-old cornbread soaks up stock without turning to mush.",
+i:[[1,"","10-inch skillet cornbread, crumbled (day old)"],[4,"slice","white bread, torn"],[0.5,"cup","butter"],[1,"","onion, diced"],[3,"","celery ribs, diced"],[2,"tsp","dried sage"],[1,"tsp","poultry seasoning"],[1,"tsp","black pepper"],[4,"cup","chicken stock"],[3,"","eggs, beaten"]],
+st:[["Heat the oven to 375°F and crumble the cornbread and bread into a big bowl.",0],["Melt the butter and cook the onion and celery until soft. Stir in the sage, poultry seasoning and pepper.",8],["Pour the vegetables over the crumbs and add the stock. It should look wet, like oatmeal. Taste for salt, then stir in the eggs.",0],["Spread into a greased 9×13 dish and bake until golden.",45],["Rest before serving.",10]]},
+
+{id:"green-beans-potatoes",n:"Green Beans and Potatoes",c:"Sides",p:"veg",d:1,t:60,s:6,k:[],sp:["garlic-powder","black-pepper"],
+tip:"Southern green beans are cooked soft and savory, not crisp. Give them the full time.",
+i:[[2,"lb","fresh green beans, trimmed and snapped"],[1,"lb","small red potatoes, halved"],[4,"slice","bacon, chopped"],[1,"","onion, diced"],[3,"cup","chicken stock"],[1,"tsp","salt"],[0.5,"tsp","black pepper"],[1,"tsp","garlic powder"]],
+st:[["Cook the bacon in a pot until browned, then add the onion.",6],["Add the beans, potatoes, stock and seasonings.",0],["Cover and simmer until everything is tender.",40]]},
+
+{id:"fried-cabbage",n:"Fried Cabbage",c:"Sides",p:"veg",d:1,t:30,s:6,k:["castiron"],sp:["red-pepper-flakes","black-pepper","garlic"],
+tip:"Let the cabbage sit untouched for a minute at a time so the edges caramelize.",
+i:[[1,"","head green cabbage, chopped"],[6,"slice","bacon, chopped"],[1,"","onion, sliced"],[2,"","garlic cloves, minced"],[1,"tsp","salt"],[0.5,"tsp","black pepper"],[0.5,"tsp","red pepper flakes"],[1,"tbsp","apple cider vinegar"],[1,"tbsp","butter"]],
+st:[["Fry the bacon until crisp and set it aside.",6],["Cook the onion in the fat, then the garlic.",5],["Add the cabbage and cook, stirring now and then, until tender with browned edges.",15],["Season, add the vinegar and butter, and stir the bacon back in.",0]]},
+
+{id:"squash-casserole",n:"Squash Casserole",c:"Sides",p:"veg",d:1,t:60,s:8,k:["custard"],sp:["black-pepper"],
+tip:"Squeeze the cooked squash well. Extra water makes a soupy casserole.",
+i:[[2,"lb","yellow squash, sliced"],[1,"","onion, diced"],[2,"","eggs"],[1,"cup","sharp cheddar, shredded"],[0.5,"cup","sour cream"],[0.5,"cup","mayonnaise"],[1,"tsp","salt"],[0.5,"tsp","black pepper"],[1,"sleeve","butter crackers, crushed"],[3,"tbsp","butter, melted"]],
+st:[["Heat the oven to 350°F.",0],["Simmer the squash and onion in salted water until tender. Drain well and press out the water.",9],["Mix the eggs, cheese, sour cream, mayo, salt and pepper, then fold in the squash. Pour into a greased 8×8 dish. Toss the crackers with butter and sprinkle on top.",0],["Bake until golden.",30]]},
+
+{id:"corn-pudding",n:"Corn Pudding",c:"Sides",p:"eggs",d:1,t:60,s:8,k:["custard"],sp:["nutmeg"],
+tip:"Take it out while the middle still jiggles a little. It sets as it rests.",
+i:[[3,"cup","corn kernels (fresh or frozen)"],[1,"can","(14.75 oz) cream-style corn"],[3,"","eggs"],[1,"cup","whole milk"],[0.25,"cup","sugar"],[3,"tbsp","all-purpose flour"],[4,"tbsp","butter, melted"],[1,"tsp","salt"],[0.125,"tsp","nutmeg"]],
+st:[["Heat the oven to 350°F and grease an 8×8 dish.",0],["Whisk the eggs, milk, sugar, flour, butter, salt and nutmeg. Stir in both kinds of corn.",0],["Pour into the dish and bake until set at the edges with a slight jiggle in the center.",48],["Rest before serving.",10]]},
+
+{id:"butter-beans",n:"Southern Butter Beans",c:"Sides",p:"veg",d:1,t:75,s:6,k:["potliquor"],sp:["black-pepper"],
+tip:"Stir in the butter at the end so the beans turn glossy and creamy.",
+i:[[2,"lb","frozen butter beans (baby limas)"],[1,"","smoked ham hock"],[5,"cup","water"],[1,"","onion, diced"],[2,"tbsp","butter"],[1,"tsp","salt"],[0.5,"tsp","black pepper"]],
+st:[["Simmer the ham hock in the water to build flavor.",30],["Add the beans and onion and simmer until creamy.",35],["Stir in the butter, pull the ham off the bone into the pot, and season.",0]]},
+
+{id:"deviled-eggs",n:"Deviled Eggs",c:"Sides",p:"eggs",d:1,t:35,s:6,k:[],sp:["paprika","black-pepper"],
+tip:"Older eggs peel more easily than very fresh ones.",
+i:[[12,"","large eggs"],[0.5,"cup","mayonnaise"],[1,"tbsp","yellow mustard"],[2,"tbsp","sweet pickle relish"],[0.25,"tsp","salt"],[0.25,"tsp","black pepper"],[1,"tsp","paprika"]],
+st:[["Cover the eggs with cold water by an inch and bring to a boil. Cover, turn off the heat and let them sit.",12],["Move the eggs to an ice bath, then peel.",10],["Halve the eggs and pop the yolks into a bowl.",0],["Mash the yolks with mayo, mustard, relish, salt and pepper until smooth.",0],["Spoon or pipe the filling into the whites, dust with paprika and chill.",0]]},
+
+{id:"biscuits",n:"Buttermilk Biscuits",c:"Breads & Breakfast",p:"eggs",d:2,t:30,s:8,k:["biscuit","castiron"],sp:[],
+tip:"Set the biscuits touching in the pan. They push against each other and rise taller.",
+i:[[2.5,"cup","all-purpose flour (soft Southern flour if you have it)"],[1,"tbsp","baking powder"],[0.5,"tsp","baking soda"],[1,"tsp","salt"],[1,"tsp","sugar"],[0.5,"cup","very cold butter, cubed"],[1,"cup","cold buttermilk"],[2,"tbsp","melted butter (for brushing)"]],
+st:[["Heat the oven to 450°F.",0],["Whisk the flour, baking powder, baking soda, salt and sugar.",0],["Rub in the cold butter until the pieces are the size of peas.",0],["Stir in the buttermilk just until a shaggy dough forms.",0],["Pat the dough 1 inch thick, fold it in thirds, and repeat 3 times. Pat to 1 inch and cut straight down without twisting. Set them touching in a cast-iron skillet.",0],["Bake until tall and golden.",13],["Brush with melted butter.",0]]},
+
+{id:"skillet-cornbread",n:"Skillet Cornbread",c:"Breads & Breakfast",p:"eggs",d:1,t:35,s:8,k:["castiron"],sp:[],
+tip:"The batter should sizzle when it hits the skillet. That's what makes the crunchy crust.",
+i:[[3,"tbsp","bacon grease or butter"],[1.5,"cup","yellow cornmeal"],[0.5,"cup","all-purpose flour"],[2,"tsp","baking powder"],[0.5,"tsp","baking soda"],[1,"tsp","salt"],[1,"tbsp","sugar (optional)"],[2,"","eggs"],[1.5,"cup","buttermilk"]],
+st:[["Put the grease in a 10-inch cast-iron skillet and heat it in a 425°F oven.",10],["Whisk the cornmeal, flour, baking powder, baking soda, salt and sugar.",0],["Whisk the eggs and buttermilk, then stir into the dry mix just until combined.",0],["Carefully pour the batter into the hot skillet.",0],["Bake until golden and a toothpick comes out clean.",20]]},
+
+{id:"hushpuppies",n:"Hushpuppies",c:"Breads & Breakfast",p:"eggs",d:1,t:30,s:6,k:["fry"],sp:[],
+tip:"Use two spoons, or a small cookie scoop, for round hushpuppies that cook evenly.",
+i:[[1,"cup","yellow cornmeal"],[0.5,"cup","all-purpose flour"],[2,"tsp","baking powder"],[1,"tsp","salt"],[1,"tbsp","sugar"],[0.5,"","small onion, grated"],[1,"","egg"],[0.75,"cup","buttermilk"],[4,"cup","oil for frying"]],
+st:[["Mix the dry ingredients, then stir in the onion, egg and buttermilk. Let the batter rest.",10],["Heat the oil to 350°F.",10],["Drop in tablespoon scoops and fry, turning, until golden.",4],["Drain on a rack and serve hot.",0]]},
+
+{id:"biscuits-gravy",n:"Biscuits and Sausage Gravy",c:"Breads & Breakfast",p:"pork",d:2,t:40,s:6,k:["gravy","roux"],sp:["black-pepper","red-pepper-flakes","sage"],
+tip:"Don't drain the sausage. Its fat is what the flour cooks in.",
+i:[[6,"","baked buttermilk biscuits"],[1,"lb","breakfast pork sausage"],[0.33,"cup","all-purpose flour"],[3,"cup","whole milk"],[0.5,"tsp","salt"],[1,"tsp","black pepper"],[0.25,"tsp","red pepper flakes"],[0.25,"tsp","dried sage"]],
+st:[["Brown the sausage, breaking it up.",8],["Sprinkle the flour over it and stir.",2],["Pour in the milk slowly while stirring.",0],["Simmer until thick.",5],["Season with pepper, pepper flakes, sage and salt. Split warm biscuits and ladle the gravy over.",0]]},
+
+{id:"cheese-grits",n:"Cheese Grits",c:"Breads & Breakfast",p:"eggs",d:1,t:40,s:6,k:["grits"],sp:["black-pepper"],
+tip:"If the grits get stiff, stir in a splash of hot water. They should flow off a spoon.",
+i:[[1,"cup","stone-ground grits"],[2,"cup","whole milk"],[2,"cup","water"],[1,"tsp","salt"],[4,"tbsp","butter"],[1.5,"cup","sharp cheddar, shredded"],[0.25,"tsp","black pepper"]],
+st:[["Bring the milk, water and salt to a boil. Watch it, milk foams up fast.",0],["Whisk in the grits slowly so they don't lump.",0],["Simmer on low, stirring every few minutes, until thick and creamy.",32],["Off the heat, stir in the butter, cheese and pepper.",0]]},
+
+{id:"chicken-waffles",n:"Chicken and Waffles",c:"Breads & Breakfast",p:"chicken",d:3,t:60,s:4,k:["dredge","fry"],sp:["paprika","black-pepper"],
+tip:"Keep finished waffles on a rack in a 200°F oven so they stay crisp while you fry.",
+i:[[1.5,"lb","chicken tenders"],[1,"cup","buttermilk"],[1.5,"cup","all-purpose flour (dredge)"],[2,"tsp","seasoning salt"],[1,"tsp","paprika"],[4,"cup","oil for frying"],[2,"cup","all-purpose flour (waffles)"],[2,"tbsp","sugar"],[2,"tsp","baking powder"],[0.5,"tsp","salt"],[2,"","eggs"],[1.75,"cup","milk"],[0.5,"cup","butter, melted"],[0.5,"cup","maple syrup"],[1,"tsp","hot sauce"]],
+st:[["Soak the tenders in buttermilk.",30],["Whisk the waffle dry ingredients. Whisk the eggs, milk and butter and stir together, leaving a few lumps.",0],["Cook the waffles and keep them warm in a 200°F oven.",15],["Dredge the tenders in flour mixed with seasoning salt and paprika, and fry at 350°F until golden.",6],["Warm the syrup with the hot sauce.",0],["Stack chicken on waffles and drizzle with the spicy syrup.",0]]},
+
+{id:"pimento-cheese",n:"Pimento Cheese",c:"Breads & Breakfast",p:"eggs",d:1,t:10,s:8,w:"Chill 30 min",k:[],sp:["cayenne","garlic-powder"],
+tip:"Grate the cheese yourself. Bagged cheese has a powder on it that makes the spread grainy.",
+i:[[8,"oz","extra-sharp cheddar, freshly grated"],[4,"oz","cream cheese, softened"],[0.5,"cup","mayonnaise"],[1,"jar","(4 oz) diced pimentos, drained"],[0.5,"tsp","garlic powder"],[0.25,"tsp","cayenne"],[1,"tsp","Worcestershire sauce"]],
+st:[["Grate the cheddar.",0],["Beat the cream cheese, mayo, garlic powder, cayenne and Worcestershire.",0],["Fold in the cheddar and pimentos.",0],["Chill, then serve with crackers, celery or on white bread.",30]]},
+
+{id:"peach-cobbler",n:"Peach Cobbler",c:"Desserts",p:"sweet",d:1,t:70,s:8,k:[],sp:["cinnamon","nutmeg"],
+tip:"Don't stir after you pour. The batter rises up around the peaches on its own.",
+i:[[6,"cup","sliced peaches (fresh or frozen)"],[1,"cup","sugar (for the fruit)"],[1,"tsp","cinnamon"],[0.25,"tsp","nutmeg"],[1,"tbsp","lemon juice"],[0.5,"cup","butter"],[1,"cup","all-purpose flour"],[1,"cup","sugar (for the batter)"],[2,"tsp","baking powder"],[0.25,"tsp","salt"],[1,"cup","milk"]],
+st:[["Heat the oven to 350°F.",0],["Simmer the peaches with sugar, cinnamon, nutmeg and lemon juice until juicy.",5],["Melt the butter in a 9×13 dish in the oven.",5],["Whisk the flour, sugar, baking powder, salt and milk. Pour it over the butter without stirring.",0],["Spoon the peaches and juice over the batter. Don't stir.",0],["Bake until golden.",42],["Cool a little before serving, ideally with vanilla ice cream.",15]]},
+
+{id:"banana-pudding",n:"Banana Pudding",c:"Desserts",p:"sweet",d:2,t:45,s:10,w:"Chill 4 hrs",k:["custard"],sp:["vanilla"],
+tip:"Layer the pudding while it's warm. It softens the wafers into a cake-like texture.",
+i:[[0.75,"cup","sugar"],[0.33,"cup","all-purpose flour"],[0.25,"tsp","salt"],[3,"cup","whole milk"],[4,"","egg yolks"],[2,"tbsp","butter"],[2,"tsp","vanilla"],[1,"box","(11 oz) vanilla wafers"],[5,"","ripe bananas, sliced"],[2,"cup","whipped cream"]],
+st:[["Whisk the sugar, flour and salt in a saucepan, then whisk in the milk and egg yolks.",0],["Cook over medium heat, stirring constantly, until thick like pudding.",11],["Off the heat, stir in the butter and vanilla.",0],["Layer wafers, bananas and warm pudding in a dish. Repeat 2–3 times.",0],["Cover the surface with plastic and chill.",240],["Top with whipped cream before serving.",0]]},
+
+{id:"pecan-pie",n:"Pecan Pie",c:"Desserts",p:"sweet",d:2,t:75,s:8,w:"Cool 2 hrs",k:["custard"],sp:["vanilla"],
+tip:"If the crust edge browns too fast, cover it with a ring of foil.",
+i:[[1,"","unbaked 9-inch pie crust"],[1,"cup","light corn syrup"],[1,"cup","brown sugar"],[3,"","eggs"],[0.33,"cup","butter, melted"],[1,"tsp","vanilla"],[0.25,"tsp","salt"],[1.5,"cup","pecan halves"]],
+st:[["Heat the oven to 350°F and fit the crust into a pie plate.",0],["Whisk the corn syrup, brown sugar, eggs, butter, vanilla and salt.",0],["Scatter the pecans in the crust and pour the filling over.",0],["Bake until the edges are set and the center has a slight jiggle.",58],["Cool completely so the filling sets.",120]]},
+
+{id:"sweet-potato-pie",n:"Sweet Potato Pie",c:"Desserts",p:"sweet",d:2,t:120,s:8,w:"Cool 2 hrs",k:["custard"],sp:["cinnamon","nutmeg","vanilla"],
+tip:"Bake the sweet potatoes instead of boiling them. The flavor is deeper and the filling isn't watery.",
+i:[[2,"cup","mashed baked sweet potatoes"],[0.5,"cup","butter, softened"],[1,"cup","sugar"],[2,"","eggs"],[0.5,"cup","evaporated milk"],[1,"tsp","vanilla"],[0.5,"tsp","cinnamon"],[0.5,"tsp","nutmeg"],[0.25,"tsp","salt"],[1,"","unbaked 9-inch pie crust"]],
+st:[["Bake the sweet potatoes at 400°F until very soft. Peel and mash them.",55],["Lower the oven to 350°F. Beat the potatoes, butter and sugar smooth, then beat in the eggs, milk, vanilla, spices and salt.",0],["Pour into the crust.",0],["Bake until the center is nearly set.",52],["Cool completely before slicing.",120]]},
+
+{id:"red-velvet",n:"Red Velvet Cake",c:"Desserts",p:"sweet",d:3,t:120,s:12,k:["cream"],sp:["vanilla"],
+tip:"Room-temperature buttermilk and eggs blend smoothly and give the cake a fine, tender crumb.",
+i:[[2.5,"cup","all-purpose flour"],[1.5,"cup","sugar"],[1,"tsp","baking soda"],[1,"tsp","salt"],[1,"tbsp","cocoa powder"],[1.5,"cup","vegetable oil"],[1,"cup","buttermilk, room temperature"],[2,"","eggs, room temperature"],[2,"tbsp","red food coloring"],[1,"tsp","white vinegar"],[1,"tsp","vanilla"],[16,"oz","cream cheese, softened (frosting)"],[0.5,"cup","butter, softened (frosting)"],[4,"cup","powdered sugar"],[2,"tsp","vanilla (frosting)"]],
+st:[["Heat the oven to 350°F. Grease and flour two 9-inch pans.",0],["Whisk the flour, sugar, baking soda, salt and cocoa.",0],["Whisk the oil, buttermilk, eggs, food coloring, vinegar and vanilla, then stir into the dry mix until smooth.",0],["Divide between the pans and bake until a toothpick comes out clean.",28],["Cool 10 minutes in the pans, then turn out and cool completely.",70],["Beat the cream cheese and butter, then beat in the powdered sugar and vanilla. Frost between the layers and all over.",0]]},
+
+{id:"pound-cake",n:"Classic Pound Cake",c:"Desserts",p:"sweet",d:2,t:120,s:12,k:["cream"],sp:["vanilla"],
+tip:"Creaming the butter and sugar long enough is what makes the cake rise. Set a timer.",
+i:[[1,"cup","butter, softened"],[0.5,"cup","shortening"],[3,"cup","sugar"],[5,"","eggs, room temperature"],[3,"cup","all-purpose flour"],[0.5,"tsp","baking powder"],[0.25,"tsp","salt"],[1,"cup","whole milk"],[2,"tsp","vanilla"]],
+st:[["Heat the oven to 325°F. Grease and flour a tube or Bundt pan.",0],["Beat the butter, shortening and sugar until pale and fluffy.",6],["Beat in the eggs one at a time.",0],["Whisk the flour, baking powder and salt. Add to the batter alternating with the milk, starting and ending with flour. Stir in the vanilla.",0],["Pour into the pan and bake until a skewer comes out clean.",80],["Cool in the pan, then turn out.",15]]},
+
+{id:"hummingbird-cake",n:"Hummingbird Cake",c:"Desserts",p:"sweet",d:2,t:100,s:12,k:["cream"],sp:["cinnamon","vanilla"],
+tip:"Stir by hand. A mixer overworks this batter and makes it tough.",
+i:[[3,"cup","all-purpose flour"],[2,"cup","sugar"],[1,"tsp","baking soda"],[1,"tsp","salt"],[1,"tsp","cinnamon"],[3,"","eggs, beaten"],[1,"cup","vegetable oil"],[1.5,"tsp","vanilla"],[1,"can","(8 oz) crushed pineapple, undrained"],[2,"cup","mashed ripe bananas"],[1,"cup","chopped pecans"],[16,"oz","cream cheese, softened (frosting)"],[0.5,"cup","butter, softened (frosting)"],[4,"cup","powdered sugar"]],
+st:[["Heat the oven to 350°F and grease three 9-inch pans.",0],["Whisk the flour, sugar, baking soda, salt and cinnamon.",0],["Stir in the eggs and oil just until moistened. Fold in the vanilla, pineapple, bananas and pecans.",0],["Divide among the pans and bake until a toothpick comes out clean.",25],["Cool 10 minutes, turn out and cool completely.",60],["Beat the cream cheese, butter and powdered sugar. Stack and frost.",0]]},
+
+{id:"sweet-tea",n:"Southern Sweet Tea",c:"Drinks",p:"sweet",d:1,t:20,s:8,w:"Chill 1 hr",k:[],sp:[],
+tip:"A tiny pinch of baking soda smooths out bitterness and keeps the tea clear.",
+i:[[4,"cup","water (to boil)"],[3,"","family-size tea bags (or 8 regular)"],[0.125,"tsp","baking soda"],[1,"cup","sugar"],[4,"cup","cold water"],[1,"","lemon, sliced"]],
+st:[["Bring 4 cups of water to a boil, then take it off the heat.",5],["Add the tea bags and baking soda and steep. Don't squeeze the bags.",10],["Remove the bags and stir in the sugar until it dissolves.",0],["Add the cold water, chill, and serve over ice with lemon.",60]]}
+];
+
+const TECHNIQUES = [
+{id:"roux",n:"Making a Roux",eli:"A roux is flour cooked in fat. Raw flour tastes like paste, so you cook it first. The longer you stir, the darker and nuttier it gets, but the less it thickens.",pts:["Use about equal parts fat and flour.","A blond roux (2–15 minutes) thickens gravy and mac and cheese. A dark roux (30–45 minutes) flavors gumbo.","Stir the whole time. Black specks mean it burned, so start over."],q:"Which roux thickens the most?",o:["A light blond roux","A dark chocolate-brown roux","They thicken the same"],a:0},
+{id:"trinity",n:"The Holy Trinity",eli:"Onion, celery and green bell pepper, chopped and cooked together. It's the flavor base of Cajun and Creole food, like the French use onion, celery and carrot.",pts:["Dice everything about the same size so it cooks evenly.","A rough ratio is 2 parts onion to 1 part celery to 1 part pepper.","Adding it to a hot roux stops the roux from browning further."],q:"In the trinity, green bell pepper takes the place of which French vegetable?",o:["Garlic","Carrot","Okra"],a:1},
+{id:"dredge",n:"Dredging",eli:"Dredging means coating food in something dry, then wet, then dry again, so a crunchy crust sticks to it when you fry.",pts:["Use one hand for dry and one for wet so your fingers don't get clumpy.","Press the coating on firmly.","Let coated pieces rest 10–15 minutes so the coating sets and won't fall off in the oil."],q:"Why rest coated chicken before frying?",o:["Only to warm it up","So the coating sets and sticks","To dry out the meat"],a:1},
+{id:"fry",n:"Frying Temperature",eli:"Oil for frying sits between 325°F and 375°F. Too cold and food soaks up oil and turns greasy. Too hot and the outside burns before the inside cooks.",pts:["Use a clip-on thermometer. No thermometer? A bread cube browns in about 60 seconds at 350°F.","Fry in small batches so the temperature doesn't crash.","Drain on a wire rack and salt right away. Never put water on a grease fire; cover it with a lid."],q:"Your fried chicken came out greasy. What's the most likely cause?",o:["The oil was too cold","The oil was too hot","Too much salt"],a:0},
+{id:"biscuit",n:"The Biscuit Method",eli:"Bits of cold butter are mixed into flour. In the hot oven, the butter melts and turns to steam, which puffs up flaky layers.",pts:["Keep the butter and buttermilk cold. Freeze the butter 15 minutes if your kitchen is warm.","Mix only until it holds together. Overworked dough makes tough biscuits.","Cut straight down. Twisting the cutter seals the edges and stops the rise."],q:"Why do biscuits need cold butter?",o:["It turns to steam in the oven and makes layers","It makes the dough sweeter","Warm butter is unsafe"],a:0},
+{id:"braise",n:"Braising and Smothering",eli:"Brown the meat, then cook it slowly, covered, in a little liquid until tough meat turns tender. Smothering is the Southern version, usually in onion gravy.",pts:["Brown the meat well. Those browned bits flavor the sauce.","The liquid comes partway up the meat, not over it.","Keep it at a bare simmer, not a boil, so the meat stays juicy."],q:"What should the liquid be doing while you braise?",o:["Rolling boil","Gentle, barely bubbling simmer","Nothing; the heat is off"],a:1},
+{id:"lowslow",n:"Low and Slow Barbecue",eli:"Tough cuts like pork shoulder are full of connective tissue. Hours at low heat melt it into gelatin, which makes the meat tender and juicy.",pts:["Cook to internal temperature and feel, not to time.","The temperature often stalls around 160°F for hours. Wrapping the meat in foil or paper pushes it through.","Rest the meat 30 minutes or more before pulling it."],q:"Pulled pork is ready to shred at about:",o:["145°F","165°F","200°F"],a:2},
+{id:"custard",n:"Custards and Puddings",eli:"Eggs set when they heat up. Gentle heat makes them smooth and creamy. Too much heat scrambles them.",pts:["On the stove, stir constantly and scrape the bottom corners.","Temper eggs by whisking in a little hot liquid before adding them to the pot.","Pies are done when the edges are set and the center still jiggles a little. They firm up as they cool."],q:"A pecan pie is done when:",o:["The center is completely firm","The edges are set and the center jiggles slightly","The crust turns dark brown"],a:1},
+{id:"cream",n:"Creaming Butter and Sugar",eli:"Beating soft butter with sugar traps tiny air bubbles. Those bubbles are what make a pound cake rise light instead of heavy.",pts:["Butter should be soft but cool, about 65°F. It dents when you press it.","Beat 5–7 minutes, until pale and fluffy.","Add eggs one at a time, and add dry and wet ingredients in turns so the batter doesn't split."],q:"How long should you cream butter and sugar for pound cake?",o:["30 seconds","5–7 minutes","Overnight"],a:1},
+{id:"castiron",n:"Cast-Iron Care",eli:"Seasoning is layers of oil baked onto the iron. It makes the skillet naturally nonstick and gets better the more you cook in it.",pts:["Preheat the skillet. Hot iron gives cornbread its crunchy crust.","Wash with hot water and a brush (a little soap is fine). Dry it on the burner and wipe on a thin coat of oil.","Avoid long simmers of acidic food like tomato sauce in a newer pan."],q:"After washing a cast-iron skillet, you should:",o:["Let it air-dry in the rack","Dry it on the heat and rub in a thin coat of oil","Soak it overnight"],a:1},
+{id:"gravy",n:"Pan Gravy",eli:"Gravy starts as a roux made from the drippings left in the pan. Add milk for cream gravy, or stock for brown gravy.",pts:["Keep the browned bits in the pan. They're the flavor.","Pour the liquid in slowly while whisking to avoid lumps.","Gravy thickens as it cools, so stop when it's a little thinner than you want. Use plenty of black pepper."],q:"How do you avoid lumpy gravy?",o:["Dump all the milk in at once","Add the liquid slowly while whisking","Skip the flour"],a:1},
+{id:"potliquor",n:"Pot Liquor",eli:"Pot liquor is the rich, smoky broth left after simmering greens or beans with smoked meat. It's full of flavor and nutrients.",pts:["Simmer the smoked meat first to build the broth before the greens go in.","Wash greens until there's no grit left in the sink.","A splash of vinegar and a pinch of sugar balance the bitterness."],q:"What's pot liquor traditionally eaten with?",o:["Cornbread","Ice cream","Pound cake"],a:0},
+{id:"grits",n:"Cooking Grits",eli:"Grits are ground dried corn. Stone-ground grits are coarse and need 30–45 minutes of slow simmering. Instant grits are fast but have less flavor.",pts:["Use about 4 parts liquid to 1 part grits.","Whisk the grits in slowly to prevent lumps.","Stir often and add hot water if they get stiff. Finish with butter and salt."],q:"What's the usual liquid-to-grits ratio?",o:["1 to 1","4 to 1","10 to 1"],a:1}
+];
+
+const PROTEINS = [
+{id:"chicken",n:"Chicken"},{id:"pork",n:"Pork"},{id:"beef",n:"Beef"},{id:"seafood",n:"Seafood"},{id:"veg",n:"Vegetables & Beans"},{id:"eggs",n:"Eggs, Dairy & Breads"},{id:"sweet",n:"Sweets & Drinks"}
+];
+
+const SPICES = [
+{id:"black-pepper",n:"Black Pepper",t:"Spice",f:"Warm, sharp heat. The backbone of Southern seasoning.",use:"Season everything savory. Cream gravy should be speckled with it.",best:["chicken","beef","pork","eggs","veg"]},
+{id:"cayenne",n:"Cayenne",t:"Spice",f:"Clean, fiery heat with little flavor of its own.",use:"Start with a pinch. It's the fire in Nashville hot chicken and a kick in flour dredges.",best:["chicken","seafood","eggs"]},
+{id:"paprika",n:"Paprika",t:"Spice",f:"Sweet, mild pepper flavor and a warm red color.",use:"Gives fried chicken its golden-red crust and tops deviled eggs and potato salad.",best:["chicken","pork","eggs"]},
+{id:"smoked-paprika",n:"Smoked Paprika",t:"Spice",f:"Sweet pepper with a campfire smokiness.",use:"Adds smoky depth to mac and cheese and spice pastes without a smoker.",best:["chicken","pork","eggs"]},
+{id:"garlic-powder",n:"Garlic Powder",t:"Spice",f:"Mellow, toasty garlic that blends evenly into dry mixes.",use:"Use in dredges and rubs, where fresh garlic would burn.",best:["chicken","beef","pork","veg"]},
+{id:"onion-powder",n:"Onion Powder",t:"Spice",f:"Sweet, savory onion flavor in dry form.",use:"Rounds out flour dredges and meatloaf.",best:["chicken","beef"]},
+{id:"cajun",n:"Cajun Seasoning",t:"Blend",f:"Paprika, cayenne, garlic, onion, black pepper and herbs in one jar.",use:"The quick route to Louisiana flavor in gumbo, jambalaya, étouffée and fried fish.",best:["seafood","chicken","pork"]},
+{id:"old-bay",n:"Old Bay",t:"Blend",f:"Celery salt, paprika, mustard and warm spices. Briny and savory.",use:"Made for seafood: boils, croquettes, crab and shrimp.",best:["seafood"]},
+{id:"poultry",n:"Poultry Seasoning",t:"Blend",f:"Sage, thyme, marjoram and rosemary. Smells like Thanksgiving.",use:"Seasons smothered chicken and cornbread dressing.",best:["chicken","veg"]},
+{id:"thyme",n:"Thyme",t:"Herb",f:"Earthy, lightly minty and savory.",use:"Holds up to long cooking, so it goes into braises, gumbo, red beans and pot pie.",best:["beef","chicken","pork"]},
+{id:"bay",n:"Bay Leaf",t:"Herb",f:"Subtle, tea-like and herbal. You notice it most when it's missing.",use:"Drop 1–2 leaves into beans, stocks and gumbo. Take them out before serving.",best:["pork","chicken","seafood","veg"]},
+{id:"sage",n:"Sage",t:"Herb",f:"Piney, savory and slightly peppery.",use:"The signature flavor of cornbread dressing and breakfast sausage gravy.",best:["pork","chicken","veg"]},
+{id:"file",n:"Filé Powder",t:"Herb",f:"Ground sassafras leaves. Earthy, like root beer and eucalyptus.",use:"Stir into gumbo at the table, off the heat. It thickens and flavors.",best:["seafood","chicken"]},
+{id:"garlic",n:"Fresh Garlic",t:"Herb",f:"Pungent and sharp raw, sweet and nutty when cooked.",use:"Add after the onions soften so it doesn't burn. Goes in almost every savory pot.",best:["chicken","beef","pork","seafood","veg"]},
+{id:"green-onion",n:"Green Onions",t:"Herb",f:"Fresh, mild onion bite.",use:"Sprinkle on gumbo, jambalaya and shrimp and grits right before serving.",best:["seafood","chicken","pork"]},
+{id:"red-pepper-flakes",n:"Red Pepper Flakes",t:"Spice",f:"Dried chile with slow-building heat.",use:"Wakes up greens, cabbage, black-eyed peas and vinegar barbecue sauce.",best:["veg","pork"]},
+{id:"celery-seed",n:"Celery Seed",t:"Spice",f:"Concentrated, slightly bitter celery flavor.",use:"The classic secret in coleslaw and potato salad.",best:["veg","eggs"]},
+{id:"allspice",n:"Allspice",t:"Spice",f:"Tastes like cinnamon, clove and nutmeg in one berry.",use:"Warms up braised oxtails and rich meat gravies.",best:["beef","pork"]},
+{id:"cinnamon",n:"Cinnamon",t:"Spice",f:"Sweet, woody warmth.",use:"Candied yams, peach cobbler, sweet potato pie and hummingbird cake.",best:["sweet","veg"]},
+{id:"nutmeg",n:"Nutmeg",t:"Spice",f:"Warm, sweet and slightly nutty. A little goes a long way.",use:"Grate into sweet potato pie, cobbler and corn pudding.",best:["sweet","veg","eggs"]},
+{id:"vanilla",n:"Vanilla",t:"Spice",f:"Sweet, floral and round.",use:"The base note in banana pudding, pound cake and nearly every Southern dessert.",best:["sweet"]}
+];
+
+const PATH = [
+{n:"First Steps",d:"No-fail basics that teach measuring, boiling and seasoning.",r:["sweet-tea","deviled-eggs","pimento-cheese","cheese-grits","coleslaw","skillet-cornbread"]},
+{n:"Sunday Sides",d:"The supper-table classics. You'll learn greens, baking and a simple custard.",r:["collard-greens","mac-cheese","candied-yams","biscuits","banana-pudding","peach-cobbler"]},
+{n:"The Main Event",d:"Braising, smothering and your first frying.",r:["smothered-chicken","meatloaf","red-beans-rice","pot-roast","fried-catfish","shrimp-grits"]},
+{n:"Pitmaster and Fry Cook",d:"The big projects: dark roux, deep frying and low-and-slow barbecue.",r:["fried-chicken","chicken-fried-steak","gumbo","pulled-pork","etouffee","red-velvet"]}
+];
+
+const METHODS = [
+{id:"fried",n:"Fried",eli:"Cooking in hot oil. Deep-frying floats the food in oil; pan-frying uses oil about halfway up. Hot oil turns the coating into a crisp shell that seals the juices in.",
+temps:[["Chicken","325–350°F oil"],["Fish, shrimp, okra","350–375°F oil"],["Hushpuppies","350°F oil"],["Chicken is done at","165°F white, 175°F dark"]],
+pts:["Pat food dry and rest coated pieces 10–15 minutes before frying.","Use a neutral, high-heat oil: peanut, vegetable or canola.","Fry in small batches and let the oil climb back up between batches.","Drain on a wire rack and salt right away while it's hot."],
+combos:[{n:"Classic fried-chicken flour",f:"Chicken, pork chops, steak",sp:["paprika","garlic-powder","onion-powder","black-pepper","cayenne"],x:"flour, salt"},{n:"Cajun cornmeal crust",f:"Catfish, shrimp, okra, green tomatoes",sp:["cajun","black-pepper"],x:"fine cornmeal, a little flour, salt"},{n:"Nashville heat",f:"Chicken",sp:["cayenne","smoked-paprika","garlic-powder"],x:"brown sugar, ladle of hot frying oil"}]},
+{id:"baked",n:"Baked and Oven-Roasted",eli:"Dry heat from the oven surrounds the food. It's how you make biscuits, casseroles and cakes, and you can oven-fry breaded food for less mess.",
+temps:[["Biscuits","450°F"],["Skillet cornbread","425°F"],["Oven-fried chicken","425°F on a rack"],["Casseroles, mac and cheese","350°F"],["Cakes","325–350°F"]],
+pts:["Preheat fully. An oven thermometer shows the real temperature.","Bake on the middle rack for even heat.","Glass and dark pans bake faster, so check early.","For crisp oven-fried food, bake on a rack over a sheet pan and mist the coating with oil."],
+combos:[{n:"Herb-roast",f:"Whole chicken, pork loin",sp:["thyme","sage","garlic","black-pepper"],x:"butter, lemon"},{n:"Sweet bake",f:"Yams, cobblers, pies, cakes",sp:["cinnamon","nutmeg","vanilla"],x:"brown sugar, butter"},{n:"Cheesy casserole",f:"Mac and cheese, squash, broccoli",sp:["smoked-paprika","black-pepper"],x:"sharp cheddar, buttered crackers"}]},
+{id:"grilled",n:"Grilled",eli:"Strong, direct heat from below. It cooks fast and adds char and a little smoke. Best for chops, chicken pieces, shrimp, vegetables and fruit.",
+temps:[["Hot side of grill","450–550°F"],["Cool side of grill","300–350°F"],["Pork chops are done at","145°F, then rest"],["Chicken thighs are done at","175°F"],["Shrimp","2–3 min per side"]],
+pts:["Set up two zones: sear over the hot side, finish over the cool side.","Clean and oil the grates so food releases.","Brush sugary barbecue sauce on only in the last few minutes so it doesn't burn.","Use a thermometer and rest meat 5 minutes."],
+combos:[{n:"Southern barbecue rub",f:"Chicken, pork chops, ribs",sp:["paprika","black-pepper","garlic-powder","cayenne"],x:"brown sugar, salt"},{n:"Cajun butter",f:"Shrimp, fish, corn",sp:["cajun","garlic"],x:"melted butter, lemon"},{n:"Herb and garlic",f:"Steak, vegetables",sp:["thyme","garlic","black-pepper"],x:"olive oil, salt"}]},
+{id:"smoked",n:"Smoked",eli:"Low heat and wood smoke over many hours. Tough, fatty cuts turn tender and pick up a deep smoky flavor and a pink smoke ring.",
+temps:[["Smoker temperature","225–275°F"],["Pork shoulder is done at","195–203°F"],["Ribs","225–250°F, 5–6 hrs"],["Whole chicken","275°F to 165°F in the breast"],["Brisket is done at","200–205°F"]],
+pts:["Use hardwood: hickory or oak for pork and beef, apple or pecan for chicken.","Thin, blue smoke is good. Thick white smoke tastes bitter.","Expect the stall around 160°F. Wrap in foil or butcher paper to push through.","Season the night before so the rub soaks in."],
+combos:[{n:"Carolina pork",f:"Pork shoulder, ribs",sp:["paprika","black-pepper","cayenne","garlic-powder","red-pepper-flakes"],x:"brown sugar, salt; finish with vinegar sauce"},{n:"Smoked poultry",f:"Whole chicken, turkey, wings",sp:["poultry","smoked-paprika","garlic-powder"],x:"butter, salt"},{n:"Texas-style beef",f:"Brisket, beef ribs",sp:["black-pepper","garlic-powder"],x:"coarse salt (salt, pepper, garlic)"}]},
+{id:"braised",n:"Braised and Smothered",eli:"Brown the meat, then cook it slowly, covered, in a little liquid or gravy until it's fork-tender. Smothering is the Southern version, usually in onion gravy.",
+temps:[["Oven braise","300–325°F, covered"],["Stovetop","Bare simmer, small bubbles"],["Chuck roast, oxtails","3–4 hrs"],["Chicken thighs, pork chops","40–60 min"]],
+pts:["Brown the meat well first. The browned bits flavor the gravy.","Deglaze the pan with stock and scrape up everything stuck to it.","Liquid should come partway up the meat, not cover it.","Keep it at a bare simmer. A hard boil makes meat stringy and dry."],
+combos:[{n:"Onion gravy",f:"Chicken, pork chops, steak",sp:["black-pepper","garlic","thyme","poultry"],x:"sliced onion, stock, a light roux"},{n:"Island-style",f:"Oxtails, beef stew",sp:["allspice","thyme","garlic","black-pepper"],x:"tomato paste, Worcestershire"},{n:"Creole tomato",f:"Chicken, shrimp",sp:["cajun","bay","thyme","garlic"],x:"trinity, diced tomatoes"}]},
+{id:"simmered",n:"Boiled and Simmered",eli:"Cooking in liquid. A rolling boil cooks seafood boils, pasta and eggs fast. A gentle simmer slowly turns beans, greens and gumbo rich and tender.",
+temps:[["Rolling boil","212°F, big bubbles"],["Simmer","185–200°F, small bubbles"],["Dried beans","2–3 hrs at a simmer"],["Stone-ground grits","30–45 min at a low simmer"]],
+pts:["Season boil water heavily. It should taste like the sea.","Simmer beans gently so the skins don't split.","Skim off fat and foam as it rises.","Add quick-cooking things like shrimp last."],
+combos:[{n:"Seafood boil",f:"Shrimp, crab, crawfish, corn, potatoes",sp:["old-bay","bay"],x:"lemons, onion, salt"},{n:"Pot liquor",f:"Collards, butter beans, black-eyed peas",sp:["red-pepper-flakes","garlic"],x:"smoked turkey or ham hock, splash of vinegar"},{n:"Cajun pot",f:"Gumbo, red beans, jambalaya",sp:["cajun","thyme","bay","garlic","file"],x:"the trinity"}]},
+{id:"skillet",n:"Skillet-Seared and Sautéed",eli:"Fast cooking in a hot pan with a little fat, usually cast iron. Great for shrimp, cabbage, greens, gravies and anything that needs a browned edge.",
+temps:[["Pan heat","Medium-high, oil shimmers"],["Shrimp","1–2 min per side"],["Fried cabbage","About 15 min"],["Sausage gravy","Brown 8 min, simmer 5 min"]],
+pts:["Preheat the pan before the food goes in.","Don't crowd the pan, or food steams instead of browning.","Leave food alone until it releases on its own.","Make a quick pan sauce from the browned bits with stock, lemon or cream."],
+combos:[{n:"Shrimp and grits",f:"Shrimp, fish",sp:["cajun","garlic","green-onion"],x:"bacon fat, lemon"},{n:"Fried cabbage and greens",f:"Cabbage, collards, green beans",sp:["black-pepper","red-pepper-flakes","garlic"],x:"bacon, cider vinegar"},{n:"Breakfast gravy",f:"Sausage, biscuits",sp:["sage","black-pepper","red-pepper-flakes"],x:"pork sausage, milk"}]}
+];
+
+const METHOD_OF = {
+"fried-chicken":"fried","chicken-dumplings":"simmered","shrimp-grits":"skillet","chicken-fried-steak":"fried","smothered-pork-chops":"braised","meatloaf":"baked","pulled-pork":"smoked","gumbo":"simmered","red-beans-rice":"simmered","jambalaya":"simmered","fried-catfish":"fried","pot-roast":"braised","nashville-hot":"fried","smothered-chicken":"braised","chicken-pot-pie":"baked","etouffee":"simmered","oxtails":"braised","salmon-croquettes":"fried","lowcountry-boil":"simmered","shrimp-po-boy":"fried",
+"mac-cheese":"baked","collard-greens":"simmered","candied-yams":"baked","fried-okra":"fried","hoppin-john":"simmered","fried-green-tomatoes":"fried","potato-salad":"simmered","cornbread-dressing":"baked","green-beans-potatoes":"simmered","fried-cabbage":"skillet","squash-casserole":"baked","corn-pudding":"baked","butter-beans":"simmered","deviled-eggs":"simmered",
+"biscuits":"baked","skillet-cornbread":"baked","hushpuppies":"fried","biscuits-gravy":"skillet","cheese-grits":"simmered","chicken-waffles":"fried",
+"peach-cobbler":"baked","banana-pudding":"simmered","pecan-pie":"baked","sweet-potato-pie":"baked","red-velvet":"baked","pound-cake":"baked","hummingbird-cake":"baked"
+};
+
+const ALT = {
+"fried-chicken":[["baked","Oven-fried: coat the same way, mist with oil and bake on a rack at 425°F for 40–45 minutes, turning once."],["smoked","Rub with the same spice mix and smoke at 275°F to 165°F in the breast, then crisp the skin over a hot grill."],["grilled","Use the flour seasoning as a dry rub on thighs and grill over two zones to 175°F."]],
+"smothered-pork-chops":[["grilled","Grill the chops with the barbecue rub to 145°F and spoon the onion gravy over at the table."],["baked","Brown the chops, cover them with the gravy and bake at 325°F for about 1 hour."]],
+"meatloaf":[["smoked","Smoke at 250°F for about 3 hours to 160°F inside, brushing on the glaze for the last 30 minutes."]],
+"pulled-pork":[["braised","No smoker? Braise in a covered Dutch oven with 1 cup stock at 300°F for 5–6 hours. Add smoked paprika to the rub."]],
+"pot-roast":[["smoked","Smoke the seasoned chuck at 250°F to about 165°F, then braise it covered with the vegetables until tender."]],
+"smothered-chicken":[["baked","Brown the chicken, pour the gravy over, cover and bake at 350°F for 45 minutes."],["grilled","Grill the thighs with poultry seasoning and serve with the onion gravy made on the stove."]],
+"fried-catfish":[["baked","Bake the cornmeal-coated fillets on an oiled rack at 425°F for 15–18 minutes."],["skillet","Blackened: brush with melted butter, coat heavily in Cajun seasoning and sear in a smoking-hot cast-iron skillet 2–3 minutes per side."]],
+"shrimp-grits":[["grilled","Skewer Cajun-seasoned shrimp and grill 2 minutes per side, then spoon over the grits."]],
+"nashville-hot":[["baked","Oven-fry on a rack at 425°F, then brush on a paste made with melted butter instead of frying oil."],["grilled","Grill the thighs and brush with the hot paste right off the fire."]],
+"salmon-croquettes":[["baked","Bake on an oiled sheet pan at 400°F for about 15 minutes, flipping halfway."]],
+"shrimp-po-boy":[["grilled","Grill Cajun-seasoned shrimp instead of frying them for a lighter po' boy."]],
+"lowcountry-boil":[["grilled","Divide everything into foil packets with butter and Old Bay. Grill or bake at 400°F for 25–30 minutes."]],
+"fried-okra":[["grilled","Toss whole pods in oil and Cajun seasoning and grill 2–3 minutes per side."],["baked","Roast sliced okra with oil, salt and cayenne at 425°F for about 20 minutes."]],
+"fried-green-tomatoes":[["baked","Bake the breaded slices on an oiled rack at 425°F for about 20 minutes, turning once."]],
+"mac-cheese":[["smoked","Smoke the assembled pan at 250°F for about 1 hour for a smoky, golden top."]],
+"collard-greens":[["skillet","Quick version: sauté thin ribbons in bacon fat with garlic and red pepper flakes for 8–10 minutes."]],
+"candied-yams":[["grilled","Grill thick sweet potato slices until tender and brush with butter, brown sugar and cinnamon."]],
+"fried-cabbage":[["grilled","Grill cabbage wedges brushed with bacon fat, black pepper and red pepper flakes."],["smoked","Core a whole cabbage, fill it with butter and seasoning, wrap the bottom in foil and smoke at 250°F for about 3 hours."]],
+"chicken-waffles":[["baked","Oven-fry the tenders on a rack at 425°F for 18–20 minutes."]],
+"hushpuppies":[["baked","Bake the batter in a greased mini-muffin pan at 425°F for 12–15 minutes."]],
+"deviled-eggs":[["smoked","Smoke peeled hard-boiled eggs at 225°F for 30 minutes before you fill them."]],
+"peach-cobbler":[["grilled","Bake it in a cast-iron skillet on a covered grill at 350°F, or grill peach halves and spoon the batter topping over in the skillet."]]
+};
+
+</script>
+<script>
+(function(){
+const $=s=>document.querySelector(s);
+const R=Object.fromEntries(RECIPES.map(r=>[r.id,r]));
+const T=Object.fromEntries(TECHNIQUES.map(t=>[t.id,t]));
+const S=Object.fromEntries(SPICES.map(s=>[s.id,s]));
+const PR=Object.fromEntries(PROTEINS.map(p=>[p.id,p]));
+const M=Object.fromEntries(METHODS.map(m=>[m.id,m]));
+const CATS=["All","Mains","Sides","Breads & Breakfast","Desserts","Drinks"];
+
+let store={fav:[],cooked:{},shop:[],quiz:{}};
+try{const v=localStorage.getItem("kk.v1");if(v)store=Object.assign(store,JSON.parse(v));}catch(e){}
+function save(){try{localStorage.setItem("kk.v1",JSON.stringify(store));}catch(e){}}
+
+const state={tab:"recipes",q:"",cat:"All",easy:false,smode:"spice",stype:"All",protein:"chicken",stack:[],serv:{},checked:{},cook:null,timer:null,copyText:null};
+
+const ICON={
+  back:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>',
+  close:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>',
+  heart:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 20s-7-4.4-9-9a4.6 4.6 0 0 1 9-2.3A4.6 4.6 0 0 1 21 11c-2 4.6-9 9-9 9z"/></svg>',
+  heartOn:'<svg viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 20s-7-4.4-9-9a4.6 4.6 0 0 1 9-2.3A4.6 4.6 0 0 1 21 11c-2 4.6-9 9-9 9z"/></svg>'
+};
+
+/* ---------- formatting ---------- */
+function fmtTime(m){if(m<60)return m+" min";const h=Math.floor(m/60),r=m%60;return h+" hr"+(r?" "+r+" min":"");}
+function fmtClock(s){const h=Math.floor(s/3600),m=Math.floor(s%3600/60),x=s%60;const p=n=>String(n).padStart(2,"0");return h?h+":"+p(m)+":"+p(x):p(m)+":"+p(x);}
+const FR=[[0,""],[1/8,"⅛"],[1/4,"¼"],[1/3,"⅓"],[1/2,"½"],[2/3,"⅔"],[3/4,"¾"],[1,""]];
+function fmtQty(q){
+  if(q>=10)return String(Math.round(q));
+  let w=Math.floor(q),f=q-w,best=FR[0];
+  for(const c of FR){if(Math.abs(c[0]-f)<Math.abs(best[0]-f))best=c;}
+  if(best[0]===1){w+=1;best=FR[0];}
+  if(!w&&!best[1])return "pinch";
+  return (w?String(w):"")+best[1];
+}
+const PL={cup:"cups",slice:"slices",sprig:"sprigs",can:"cans",jar:"jars",box:"boxes",sleeve:"sleeves"};
+function amount(ing,f){const q=ing[0]*f;const a=fmtQty(q);let u=ing[1];if(u&&q>1.01&&PL[u])u=PL[u];if(a==="pinch")return "pinch";return u?a+" "+u:a;}
+function factor(r){return (state.serv[r.id]||r.s)/r.s;}
+const DIFF=["","Easy","Medium","Project"];
+function diffBars(d){return '<span class="diff" aria-label="'+DIFF[d]+'"><i class="on"></i><i class="'+(d>1?"on":"")+'"></i><i class="'+(d>2?"on":"")+'"></i></span>';}
+function dotClass(c){return c.split(" ")[0];}
+
+/* ---------- components ---------- */
+function card(r){
+  const cooked=store.cooked[r.id],fav=store.fav.includes(r.id);
+  return '<button class="card" data-act="open-recipe" data-id="'+r.id+'">'+
+    '<span class="eyebrow cat"><span class="dot '+dotClass(r.c)+'"></span>'+r.c+'</span>'+
+    '<h3>'+r.n+'</h3>'+
+    '<span class="meta"><span class="mono">'+fmtTime(r.t)+'</span><span>'+diffBars(r.d)+' '+DIFF[r.d]+'</span>'+
+    '<span class="flags">'+(fav?'<span class="flag saved">Saved</span>':'')+(cooked?'<span class="flag cooked">Cooked</span>':'')+'</span></span>'+
+  '</button>';
+}
+function spicePills(ids){return ids.map(id=>'<button class="pill herb" data-act="open-spice" data-id="'+id+'">'+S[id].n+'</button>').join("");}
+function techPills(ids){return ids.map(id=>'<button class="pill tech" data-act="open-tech" data-id="'+id+'">'+T[id].n+'</button>').join("");}
+function dishesForSpice(id){return RECIPES.filter(r=>r.sp.includes(id));}
+
+/* ---------- tabs ---------- */
+function nextOnPath(){
+  for(let i=0;i<PATH.length;i++){for(const id of PATH[i].r){if(!store.cooked[id])return {r:R[id],lvl:i+1,name:PATH[i].n};}}
+  return null;
+}
+function filtered(){
+  const q=state.q.trim().toLowerCase();
+  return RECIPES.filter(r=>(state.cat==="All"||r.c===state.cat)&&(!state.easy||r.d===1)&&
+    (!q||r.n.toLowerCase().includes(q)||r.i.some(x=>x[2].toLowerCase().includes(q))||r.sp.some(s=>S[s].n.toLowerCase().includes(q))));
+}
+function listHTML(){
+  const list=filtered();
+  if(!list.length)return '<div class="empty">No recipes match that. Try another word or clear the filters.</div>';
+  return '<div class="grid">'+list.map(card).join("")+'</div>';
+}
+function viewRecipes(){
+  const nx=nextOnPath();
+  return '<section class="section">'+
+    (nx?'<button class="next" data-act="open-recipe" data-id="'+nx.r.id+'"><span class="eyebrow">Next on your path · Level '+nx.lvl+', '+nx.name+'</span><strong>'+nx.r.n+'</strong><span class="muted">'+fmtTime(nx.r.t)+' · '+DIFF[nx.r.d]+'</span></button>':'')+
+    '<div class="section-head"><h2>The recipe box</h2><span class="muted mono">'+RECIPES.length+' recipes</span></div>'+
+    '<input class="search" id="q" type="search" placeholder="Search a dish, ingredient or spice" value="'+state.q.replace(/"/g,"&quot;")+'" aria-label="Search recipes">'+
+    '<div class="chips" role="group" aria-label="Category">'+CATS.map(c=>'<button class="chip" data-act="cat" data-id="'+c+'" aria-pressed="'+(state.cat===c)+'">'+c+'</button>').join("")+
+    '<button class="chip" data-act="easy" aria-pressed="'+state.easy+'">Easy only</button></div>'+
+    '<div id="list">'+listHTML()+'</div></section>';
+}
+function viewSpices(){
+  let h='<section class="section"><div class="section-head"><h2>Herbs, spices &amp; methods</h2></div>'+
+    '<p class="muted" style="margin:0;max-width:60ch">Start from a seasoning to see the dishes it belongs in, from a protein to see what to season it with, or from a cooking method to learn the temperatures, best practices and spice blends.</p>'+
+    '<span class="eyebrow">Start with</span><div class="seg" role="group" aria-label="Start with"><button data-act="smode" data-id="spice" aria-pressed="'+(state.smode==="spice")+'">A seasoning</button><button data-act="smode" data-id="protein" aria-pressed="'+(state.smode==="protein")+'">A protein</button><button data-act="smode" data-id="method" aria-pressed="'+(state.smode==="method")+'">A method</button></div>';
+  if(state.smode==="method"){
+    h+='<div class="grid">'+METHODS.map(m=>{const n=RECIPES.filter(r=>METHOD_OF[r.id]===m.id).length,a=Object.values(ALT).filter(l=>l.some(x=>x[0]===m.id)).length;
+      return '<button class="card" data-act="open-method" data-id="'+m.id+'"><span class="eyebrow">'+n+' recipes · '+a+' swaps</span><h3>'+m.n+'</h3><span class="muted" style="font-size:13.5px">'+m.eli.split(". ")[0]+'.</span></button>';}).join("")+'</div>';
+  }else if(state.smode==="spice"){
+    const types=["All","Herb","Spice","Blend"];
+    h+='<div class="chips" role="group" aria-label="Type">'+types.map(t=>'<button class="chip" data-act="stype" data-id="'+t+'" aria-pressed="'+(state.stype===t)+'">'+(t==="All"?"All":t+"s")+'</button>').join("")+'</div>';
+    const list=SPICES.filter(s=>state.stype==="All"||s.t===state.stype);
+    h+='<div class="grid">'+list.map(s=>{const n=dishesForSpice(s.id).length;return '<button class="card spice" data-act="open-spice" data-id="'+s.id+'"><span class="row" style="justify-content:space-between"><span class="tag '+s.t+'">'+s.t+'</span><span class="mono muted" style="font-size:12.5px">'+n+' dish'+(n===1?"":"es")+'</span></span><h3>'+s.n+'</h3><p>'+s.f+'</p></button>';}).join("")+'</div>';
+  }else{
+    const p=state.protein;
+    h+='<div class="chips" role="group" aria-label="Protein">'+PROTEINS.map(x=>'<button class="chip" data-act="prot" data-id="'+x.id+'" aria-pressed="'+(p===x.id)+'">'+x.n+'</button>').join("")+'</div>';
+    const dishes=RECIPES.filter(r=>r.p===p);
+    const count={};dishes.forEach(r=>r.sp.forEach(s=>count[s]=(count[s]||0)+1));
+    const ranked=SPICES.filter(s=>s.best.includes(p)||count[s.id]).sort((a,b)=>(count[b.id]||0)-(count[a.id]||0)||a.n.localeCompare(b.n));
+    h+='<div class="block"><h2>Best seasonings for '+PR[p].n.toLowerCase()+'</h2><div class="rank">'+ranked.map(s=>'<button data-act="open-spice" data-id="'+s.id+'"><b>'+s.n+'</b><span class="tag '+s.t+'">'+s.t+'</span><small>'+(count[s.id]?'In '+count[s.id]+' of these dishes. ':'')+s.use+'</small></button>').join("")+'</div></div>';
+    h+='<div class="block"><h2>'+PR[p].n+' dishes and their seasonings</h2>'+dishes.map(r=>'<div class="dish"><button data-act="open-recipe" data-id="'+r.id+'">'+r.n+'</button>'+(r.sp.length?'<div class="pills">'+spicePills(r.sp)+'</div>':'<span class="muted" style="font-size:13.5px">No added spices. This one is about technique.</span>')+'</div>').join("")+'</div>';
+  }
+  return h+'</section>';
+}
+function viewLearn(){
+  let h='<section class="section"><div class="section-head"><h2>Your learning path</h2></div><p class="muted" style="margin:0;max-width:60ch">Four levels, six dishes each. Cook them in order and each one teaches a skill the next one needs.</p>';
+  PATH.forEach((l,i)=>{const done=l.r.filter(id=>store.cooked[id]).length;
+    h+='<div class="level"><div class="level-head"><h3>Level '+(i+1)+': '+l.n+'</h3><span class="mono muted">'+done+'/'+l.r.length+'</span></div><div class="prog"><span style="width:'+(done/l.r.length*100)+'%"></span></div><p class="muted" style="margin:0">'+l.d+'</p><div class="pathlist">'+l.r.map(id=>'<button class="'+(store.cooked[id]?"done":"")+'" data-act="open-recipe" data-id="'+id+'">'+R[id].n+'</button>').join("")+'</div></div>';});
+  const passed=Object.keys(store.quiz).length;
+  h+='<div class="section-head" style="margin-top:8px"><h2>Techniques</h2><span class="mono muted">'+passed+'/'+TECHNIQUES.length+' passed</span></div><div class="grid">'+
+    TECHNIQUES.map(t=>{const n=RECIPES.filter(r=>r.k.includes(t.id)).length;return '<button class="card" data-act="open-tech" data-id="'+t.id+'"><span class="eyebrow">'+(store.quiz[t.id]?'Passed':'Lesson')+' · '+n+' recipes</span><h3>'+t.n+'</h3><span class="muted" style="font-size:13.5px">'+t.eli.split(". ")[0]+'.</span></button>';}).join("")+'</div>';
+  return h+'</section>';
+}
+function viewKitchen(){
+  const cooked=Object.keys(store.cooked).length;
+  let h='<section class="section"><div class="section-head"><h2>My kitchen</h2></div>'+
+    '<div class="stats"><div class="stat"><b>'+cooked+'<span class="muted" style="font-size:14px">/50</span></b><span>Dishes cooked</span></div><div class="stat"><b>'+store.fav.length+'</b><span>Saved</span></div><div class="stat"><b>'+Object.keys(store.quiz).length+'<span class="muted" style="font-size:14px">/'+TECHNIQUES.length+'</span></b><span>Lessons passed</span></div></div>';
+  h+='<div class="block"><div class="section-head"><h2>Shopping list</h2><span class="mono muted">'+store.shop.length+' items</span></div>';
+  if(!store.shop.length)h+='<div class="empty">Open any recipe and tap "Add to shopping list". Items show up here with the dish they\'re for.</div>';
+  else{
+    h+='<ul class="shop">'+store.shop.map((x,i)=>'<li><input type="checkbox" id="shop-'+i+'" data-shop="'+i+'" '+(x.done?"checked":"")+'><label for="shop-'+i+'">'+x.text+'<small>'+x.from+'</small></label><button class="x" data-act="shop-remove" data-id="'+i+'" aria-label="Remove '+x.text.replace(/"/g,"&quot;")+'">×</button></li>').join("")+'</ul>'+
+      '<div class="row"><button class="btn small" data-act="shop-copy">Copy list</button><button class="btn small ghost" data-act="shop-clear-done">Clear checked</button><button class="btn small ghost" data-act="shop-clear-all">Clear all</button></div>';
+    if(state.copyText)h+='<p class="muted" style="margin:0">Copying is blocked here. Select the text below and copy it.</p><textarea class="copyfall" id="copyfall" readonly>'+state.copyText+'</textarea>';
+  }
+  h+='</div>';
+  const favs=store.fav.map(id=>R[id]).filter(Boolean);
+  h+='<div class="block"><h2>Saved recipes</h2>'+(favs.length?'<div class="grid">'+favs.map(card).join("")+'</div>':'<div class="empty">Tap the heart on a recipe to save it here.</div>')+'</div>';
+  const hist=Object.entries(store.cooked).sort((a,b)=>b[1].localeCompare(a[1]));
+  h+='<div class="block"><h2>Cooked</h2>'+(hist.length?'<div class="rank">'+hist.map(([id,d])=>'<button data-act="open-recipe" data-id="'+id+'"><b>'+R[id].n+'</b><span class="mono muted" style="font-size:13px">'+d+'</span></button>').join("")+'</div>':'<div class="empty">Finish a recipe in cook mode and it lands here.</div>')+'</div>';
+  return h+'</section>';
+}
+function render(){
+  const v={recipes:viewRecipes,spices:viewSpices,learn:viewLearn,kitchen:viewKitchen}[state.tab]();
+  $("#main").innerHTML=v;
+  document.querySelectorAll(".nav button").forEach(b=>b.setAttribute("aria-current",b.dataset.id===state.tab?"page":"false"));
+}
+
+/* ---------- sheets ---------- */
+function sheetRecipe(r){
+  const f=factor(r),serv=state.serv[r.id]||r.s,fav=store.fav.includes(r.id),ck=state.checked[r.id]||{};
+  return '<div class="eyebrow cat"><span class="dot '+dotClass(r.c)+'"></span>'+r.c+'</div><h1>'+r.n+'</h1>'+
+  '<div class="facts"><div class="fact"><span class="muted">Time</span><b>'+fmtTime(r.t)+'</b></div>'+(r.w?'<div class="fact"><span class="muted">Plan ahead</span><b style="font-family:var(--body);font-size:14px;font-weight:600">'+r.w+'</b></div>':'')+
+  '<div class="fact"><span class="muted">Level</span><b style="font-family:var(--body);font-size:14px;font-weight:600">'+diffBars(r.d)+' '+DIFF[r.d]+'</b></div>'+
+  '<div class="fact"><span class="muted">Serves</span><span class="stepper"><button data-act="serv" data-id="'+r.id+'" data-d="-1" aria-label="Fewer servings">−</button><b>'+serv+'</b><button data-act="serv" data-id="'+r.id+'" data-d="1" aria-label="More servings">+</button></span></div></div>'+
+  '<div class="tip"><span class="eyebrow">Kayla\'s tip</span><p>'+r.tip+'</p></div>'+
+  (r.k.length?'<div class="block"><span class="eyebrow">Skills you\'ll practice</span><div class="pills">'+techPills(r.k)+'</div></div>':'')+
+  (r.sp.length?'<div class="block"><span class="eyebrow">Herbs &amp; spices in this dish</span><div class="pills">'+spicePills(r.sp)+'</div></div>':'')+
+  waysToCook(r)+
+  '<div class="block"><h2>Ingredients</h2><ul class="ings">'+r.i.map((x,i)=>'<li><label><input type="checkbox" data-ing="'+r.id+'" data-i="'+i+'" '+(ck[i]?"checked":"")+'><span class="amt">'+amount(x,f)+'</span><span>'+x[2]+'</span></label></li>').join("")+'</ul>'+
+  (f!==1?'<p class="muted" style="margin:0;font-size:13px">Amounts scaled for '+serv+'. Cook times and pan sizes may need adjusting.</p>':'')+'</div>'+
+  '<div class="block"><h2>Steps</h2><ol class="steps">'+r.st.map(s=>'<li><div><p>'+s[0]+'</p>'+(s[1]?'<span class="timerpill">'+fmtTime(s[1])+' timer</span>':'')+'</div></li>').join("")+'</ol></div>'+
+  '<div class="actions"><button class="btn" data-act="cook-start" data-id="'+r.id+'">Start cooking</button><button class="btn ghost" data-act="shop-add" data-id="'+r.id+'">Add to shopping list</button><button class="btn ghost" data-act="mark-cooked" data-id="'+r.id+'">'+(store.cooked[r.id]?'Cooked '+store.cooked[r.id]+' · Undo':'Mark as cooked')+'</button></div>';
+}
+function waysToCook(r){
+  const m=METHOD_OF[r.id],alts=ALT[r.id]||[];
+  if(!m&&!alts.length)return "";
+  let h='<div class="block"><h2>Ways to cook it</h2><div class="rank">';
+  if(m)h+='<button data-act="open-method" data-id="'+m+'"><b>'+M[m].n+'</b><span class="tag Herb">This recipe</span><small>The method used in the steps below. Tap for temperatures, best practices and seasoning combos.</small></button>';
+  alts.forEach(a=>{h+='<button data-act="open-method" data-id="'+a[0]+'"><b>'+M[a[0]].n+'</b><span class="tag">Try it</span><small>'+a[1]+'</small></button>';});
+  return h+'</div></div>';
+}
+function sheetMethod(m){
+  const prim=RECIPES.filter(r=>METHOD_OF[r.id]===m.id);
+  const alts=Object.entries(ALT).flatMap(([id,l])=>l.filter(x=>x[0]===m.id).map(x=>[R[id],x[1]]));
+  return '<div class="eyebrow">Cooking method</div><h1>'+m.n+'</h1><div class="lesson block"><p class="eli">'+m.eli+'</p></div>'+
+  '<div class="block"><h2>Temperature guide</h2><ul class="ings">'+m.temps.map(t=>'<li><label style="grid-template-columns:1fr auto;cursor:default"><span>'+t[0]+'</span><span class="amt">'+t[1]+'</span></label></li>').join("")+'</ul></div>'+
+  '<div class="block"><h2>Best practices</h2><ul class="points">'+m.pts.map(p=>'<li>'+p+'</li>').join("")+'</ul></div>'+
+  '<div class="block"><h2>Seasoning combinations</h2>'+m.combos.map(c=>'<div class="dish"><b style="font-family:var(--display);font-size:16px">'+c.n+'</b><span class="muted" style="font-size:13.5px">Best for: '+c.f+'</span><div class="pills">'+spicePills(c.sp)+'</div><span style="font-size:13.5px">Plus: '+c.x+'</span></div>').join("")+'</div>'+
+  (prim.length?'<div class="block"><h2>Recipes cooked this way</h2><div class="grid">'+prim.map(card).join("")+'</div></div>':'')+
+  (alts.length?'<div class="block"><h2>Other dishes you can cook this way</h2><div class="rank">'+alts.map(([r,note])=>'<button data-act="open-recipe" data-id="'+r.id+'"><b>'+r.n+'</b><small>'+note+'</small></button>').join("")+'</div></div>':'');
+}
+function sheetTech(t){
+  const recs=RECIPES.filter(r=>r.k.includes(t.id)),ans=state.quizPick&&state.quizPick[t.id];
+  let quiz='<div class="quiz">'+t.o.map((o,i)=>{let cls="";if(ans!==undefined){if(i===t.a)cls="right";else if(i===ans)cls="wrong";}return '<button class="'+cls+'" data-act="quiz" data-id="'+t.id+'" data-i="'+i+'">'+o+'</button>';}).join("");
+  if(ans!==undefined)quiz+='<p class="fb" style="margin:0;color:'+(ans===t.a?"var(--good)":"var(--pepper)")+'">'+(ans===t.a?"That's right. Lesson passed.":"Not quite. The right answer is highlighted. Read the key points and try again.")+'</p>';
+  quiz+='</div>';
+  return '<div class="eyebrow">Technique · '+(store.quiz[t.id]?"Passed":"Lesson")+'</div><h1>'+t.n+'</h1><div class="lesson block"><p class="eli">'+t.eli+'</p></div>'+
+  '<div class="block"><h2>Key points</h2><ul class="points">'+t.pts.map(p=>'<li>'+p+'</li>').join("")+'</ul></div>'+
+  '<div class="block"><h2>Check yourself</h2><p style="margin:0;font-weight:600">'+t.q+'</p>'+quiz+'</div>'+
+  '<div class="block"><h2>Practice with</h2><div class="grid">'+recs.map(card).join("")+'</div></div>';
+}
+function sheetSpice(s){
+  const recs=dishesForSpice(s.id);
+  return '<div class="row"><span class="tag '+s.t+'">'+s.t+'</span></div><h1>'+s.n+'</h1>'+
+  '<div class="tip"><span class="eyebrow">What it tastes like</span><p>'+s.f+'</p></div>'+
+  '<div class="block"><h2>How to use it</h2><p style="margin:0;max-width:62ch">'+s.use+'</p></div>'+
+  '<div class="block"><h2>Goes best with</h2><div class="pills">'+s.best.map(p=>'<button class="pill" data-act="open-protein" data-id="'+p+'">'+PR[p].n+'</button>').join("")+'</div></div>'+
+  '<div class="block"><h2>Dishes you can cook with it</h2>'+(recs.length?'<div class="grid">'+recs.map(card).join("")+'</div>':'<div class="empty">Used at the table rather than in a specific recipe here.</div>')+'</div>';
+}
+function renderSheet(){
+  const el=$("#sheet"),top=state.stack[state.stack.length-1];
+  if(!top){el.hidden=true;el.innerHTML="";document.body.style.overflow="";return;}
+  let title="",body="",extra="";
+  if(top.type==="recipe"){const r=R[top.id];title=r.n;body=sheetRecipe(r);const fav=store.fav.includes(r.id);extra='<button class="iconbtn" data-act="fav" data-id="'+r.id+'" aria-pressed="'+fav+'" aria-label="'+(fav?"Remove from saved":"Save recipe")+'">'+(fav?ICON.heartOn:ICON.heart)+'</button>';}
+  else if(top.type==="tech"){const t=T[top.id];title=t.n;body=sheetTech(t);}
+  else if(top.type==="spice"){const s=S[top.id];title=s.n;body=sheetSpice(s);}
+  else if(top.type==="method"){const m=M[top.id];title=m.n;body=sheetMethod(m);}
+  const keep=el.hidden?0:el.scrollTop;
+  el.innerHTML='<div class="sheet-bar"><div class="wrap"><button class="iconbtn" data-act="back" aria-label="Back">'+ICON.back+'</button><span class="title">'+title+'</span>'+extra+'</div></div><div class="wrap sheet-body">'+body+'</div>';
+  el.hidden=false;document.body.style.overflow="hidden";
+  if(top.keep)el.scrollTop=keep;else el.scrollTop=0;
+  top.keep=false;
+}
+function push(type,id){state.stack.push({type,id});renderSheet();}
+function refreshSheet(){const t=state.stack[state.stack.length-1];if(t){t.keep=true;renderSheet();}}
+
+/* ---------- cook mode + timer ---------- */
+let audio=null,wake=null;
+function beep(){try{audio=audio||new (window.AudioContext||window.webkitAudioContext)();const t0=audio.currentTime;[0,.35,.7].forEach(d=>{const o=audio.createOscillator(),g=audio.createGain();o.frequency.value=880;o.connect(g);g.connect(audio.destination);g.gain.setValueAtTime(.0001,t0+d);g.gain.exponentialRampToValueAtTime(.3,t0+d+.02);g.gain.exponentialRampToValueAtTime(.0001,t0+d+.28);o.start(t0+d);o.stop(t0+d+.3);});}catch(e){}try{navigator.vibrate&&navigator.vibrate([300,150,300]);}catch(e){}}
+function tick(){
+  const tm=state.timer;if(!tm||!tm.running)return;
+  tm.rem=Math.max(0,Math.round((tm.end-Date.now())/1000));
+  document.querySelectorAll(".tm-text").forEach(e=>e.textContent=fmtClock(tm.rem));
+  if(tm.rem===0){tm.running=false;tm.done=true;clearInterval(tm.iv);beep();toast("Timer done for step "+(tm.step+1));renderCook();}
+}
+function startTimer(step,sec){
+  if(state.timer)clearInterval(state.timer.iv);
+  state.timer={step,total:sec,rem:sec,running:true,done:false,end:Date.now()+sec*1000};
+  state.timer.iv=setInterval(tick,500);
+  try{audio=audio||new (window.AudioContext||window.webkitAudioContext)();audio.resume&&audio.resume();}catch(e){}
+}
+function renderCook(){
+  const el=$("#cook");
+  if(!state.cook){el.hidden=true;el.innerHTML="";return;}
+  const r=R[state.cook.id],i=state.cook.i,s=r.st[i],n=r.st.length,tm=state.timer,f=factor(r);
+  let timer="";
+  if(s[1]){
+    const mine=tm&&tm.step===i&&tm.id===r.id;
+    const rem=mine?tm.rem:s[1]*60;
+    timer='<div class="timer'+(mine&&tm.done?" done":"")+'"><span class="eyebrow">'+(mine&&tm.done?"Time's up":"Step timer · "+fmtTime(s[1]))+'</span><span class="big tm-text">'+fmtClock(rem)+'</span><div class="row">'+
+      (mine&&tm.running?'<button class="btn small" data-act="timer-pause">Pause</button>':'<button class="btn small" data-act="timer-go">'+(mine&&!tm.done&&tm.rem<tm.total?"Resume":"Start timer")+'</button>')+
+      (mine?'<button class="btn small ghost" data-act="timer-reset">Reset</button>':'')+'</div></div>';
+  }
+  const other=tm&&tm.id===r.id&&tm.step!==i&&(tm.running||tm.done)?'<button class="mini" data-act="cook-goto" data-id="'+tm.step+'"><span>Step '+(tm.step+1)+' timer</span><span class="mono tm-text">'+fmtClock(tm.rem)+'</span></button>':'';
+  el.innerHTML='<div class="cook-top"><div class="wrap"><button class="iconbtn" data-act="cook-close" aria-label="Exit cook mode">'+ICON.close+'</button><span class="title" style="flex:1;min-width:0;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+r.n+'</span><span class="mono muted">'+(i+1)+'/'+n+'</span></div></div>'+
+    '<div class="bar"><span style="width:'+((i+1)/n*100)+'%"></span></div>'+
+    '<div class="cook-main"><div class="wrap">'+other+'<span class="eyebrow">Step '+(i+1)+' of '+n+'</span><p class="cook-step">'+s[0]+'</p>'+timer+
+    (i===0&&r.k.length?'<div class="block"><span class="eyebrow">Skills in this recipe</span><div class="pills">'+r.k.map(k=>'<span class="pill tech">'+T[k].n+'</span>').join("")+'</div></div>':'')+
+    '<details class="ingdrawer"'+(i===0?" open":"")+'><summary>Ingredients for '+(state.serv[r.id]||r.s)+'</summary><ul>'+r.i.map(x=>'<li><span class="mono">'+amount(x,f)+'</span> '+x[2]+'</li>').join("")+'</ul></details>'+
+    '</div></div>'+
+    '<div class="cook-foot"><div class="wrap"><button class="btn ghost" data-act="cook-prev" '+(i===0?"disabled":"")+'>Back</button>'+
+    (i<n-1?'<button class="btn" data-act="cook-next">Next step</button>':'<button class="btn" data-act="cook-finish">Finish and mark cooked</button>')+'</div></div>';
+  el.hidden=false;
+}
+async function lockScreen(){try{if(navigator.wakeLock)wake=await navigator.wakeLock.request("screen");}catch(e){wake=null;}}
+function today(){const d=new Date();return d.toLocaleDateString(undefined,{month:"short",day:"numeric",year:"numeric"});}
+
+/* ---------- toast ---------- */
+let tt=null;
+function toast(msg){const t=$("#toast");t.textContent=msg;t.hidden=false;clearTimeout(tt);tt=setTimeout(()=>t.hidden=true,2600);}
+
+/* ---------- events ---------- */
+document.addEventListener("click",e=>{
+  const b=e.target.closest("[data-act]");if(!b)return;
+  const a=b.dataset.act,id=b.dataset.id;
+  switch(a){
+    case "tab":state.tab=id;state.stack=[];state.copyText=null;renderSheet();render();window.scrollTo(0,0);break;
+    case "cat":state.cat=id;render();break;
+    case "easy":state.easy=!state.easy;render();break;
+    case "smode":state.smode=id;render();break;
+    case "stype":state.stype=id;render();break;
+    case "prot":state.protein=id;render();break;
+    case "open-recipe":push("recipe",id);break;
+    case "open-tech":push("tech",id);break;
+    case "open-spice":push("spice",id);break;
+    case "open-method":push("method",id);break;
+    case "open-protein":state.tab="spices";state.smode="protein";state.protein=id;state.stack=[];renderSheet();render();window.scrollTo(0,0);break;
+    case "back":state.stack.pop();renderSheet();render();break;
+    case "fav":{const i=store.fav.indexOf(id);if(i>=0){store.fav.splice(i,1);toast("Removed from saved");}else{store.fav.push(id);toast("Saved to My Kitchen");}save();refreshSheet();render();break;}
+    case "serv":{const r=R[id];const v=Math.min(48,Math.max(1,(state.serv[id]||r.s)+Number(b.dataset.d)));state.serv[id]=v;refreshSheet();break;}
+    case "shop-add":{const r=R[id],f=factor(r);let n=0;r.i.forEach(x=>{const text=(amount(x,f)+" "+x[2]).trim();if(!store.shop.some(s=>s.text===text&&s.from===r.n)){store.shop.push({text,from:r.n,done:false});n++;}});save();toast(n?n+" items added to your shopping list":"Already on your list");break;}
+    case "mark-cooked":if(store.cooked[id]){delete store.cooked[id];toast("Unmarked");}else{store.cooked[id]=today();toast("Nice work. Marked as cooked.");}save();refreshSheet();render();break;
+    case "quiz":{state.quizPick=state.quizPick||{};const i=Number(b.dataset.i);state.quizPick[id]=i;if(i===T[id].a){store.quiz[id]=true;save();}refreshSheet();render();break;}
+    case "cook-start":state.cook={id,i:0};lockScreen();renderCook();break;
+    case "cook-next":state.cook.i++;renderCook();$("#cook .cook-main").scrollTop=0;break;
+    case "cook-prev":if(state.cook.i>0)state.cook.i--;renderCook();break;
+    case "cook-goto":state.cook.i=Number(id);renderCook();break;
+    case "cook-close":state.cook=null;if(state.timer){clearInterval(state.timer.iv);state.timer=null;}try{wake&&wake.release();}catch(e){}renderCook();break;
+    case "cook-finish":{const rid=state.cook.id;store.cooked[rid]=today();save();state.cook=null;if(state.timer){clearInterval(state.timer.iv);state.timer=null;}try{wake&&wake.release();}catch(e){}renderCook();refreshSheet();render();toast(R[rid].n+" is in the books. Well done.");break;}
+    case "timer-go":{const r=R[state.cook.id],i=state.cook.i,tm=state.timer;
+      if(tm&&tm.id===r.id&&tm.step===i&&!tm.done&&tm.rem>0){tm.end=Date.now()+tm.rem*1000;tm.running=true;tm.iv=setInterval(tick,500);}
+      else{startTimer(i,r.st[i][1]*60);state.timer.id=r.id;}
+      renderCook();break;}
+    case "timer-pause":{const tm=state.timer;clearInterval(tm.iv);tm.rem=Math.max(0,Math.round((tm.end-Date.now())/1000));tm.running=false;renderCook();break;}
+    case "timer-reset":{const tm=state.timer;if(tm)clearInterval(tm.iv);state.timer=null;renderCook();break;}
+    case "shop-remove":store.shop.splice(Number(id),1);save();render();break;
+    case "shop-clear-done":store.shop=store.shop.filter(x=>!x.done);save();render();break;
+    case "shop-clear-all":store.shop=[];state.copyText=null;save();render();break;
+    case "shop-copy":{const groups={};store.shop.forEach(x=>{(groups[x.from]=groups[x.from]||[]).push((x.done?"[x] ":"[ ] ")+x.text);});
+      const text="Kayla's Kitchen shopping list\n\n"+Object.entries(groups).map(([k,v])=>k+"\n"+v.join("\n")).join("\n\n");
+      const fallback=()=>{state.copyText=text;render();const ta=$("#copyfall");if(ta){ta.focus();ta.select();}};
+      try{navigator.clipboard.writeText(text).then(()=>{state.copyText=null;toast("Shopping list copied");},fallback);}catch(err){fallback();}
+      break;}
+  }
+});
+document.addEventListener("change",e=>{
+  const t=e.target;
+  if(t.dataset.ing){const c=state.checked[t.dataset.ing]=state.checked[t.dataset.ing]||{};c[t.dataset.i]=t.checked;}
+  if(t.dataset.shop!==undefined){store.shop[Number(t.dataset.shop)].done=t.checked;save();}
+});
+document.addEventListener("input",e=>{if(e.target.id==="q"){state.q=e.target.value;$("#list").innerHTML=listHTML();}});
+document.addEventListener("keydown",e=>{if(e.key==="Escape"){if(state.cook){$("[data-act=cook-close]").click();}else if(state.stack.length){state.stack.pop();renderSheet();render();}}});
+document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible"&&state.cook)lockScreen();});
+
+render();
+})();
+</script>
+
+</body>
+</html>
