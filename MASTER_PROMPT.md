@@ -37,3 +37,8 @@ Technique: `{id, n, eli:plain explanation, pts:[3 points], q:question, o:[3 opti
 
 ## Ideas for v2
 Recipe photos, more regional dishes (Hot Brown, Brunswick stew, tomato pie), a meal planner that builds a week and a combined grocery list, and a shareable public link.
+
+## Hosting (public link)
+- Live site: https://blacey205.github.io/kaylas-kitchen/ (free GitHub Pages, no account needed to view)
+- Repo: github.com/BLacey205/kaylas-kitchen. `index.html` is the live site; `src/` holds `app.html` and `data1–4.js`.
+- To publish an update: rebuild `index.html` from `src/` (inject data at `/*DATA*/`, wrap in a full HTML document), run the self-checks, commit and push to `main`. Pages redeploys in 1–2 minutes.
