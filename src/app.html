@@ -186,6 +186,22 @@ details.ingdrawer ul{margin:8px 0 0;padding-left:18px}
 .shop .x{border:0;background:none;color:var(--muted);font-size:20px;line-height:1;padding:0 4px}
 .copyfall{width:100%;min-height:140px;font-family:var(--mono);font-size:13px;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--ink);padding:10px}
 
+/* Journal form */
+.logform{display:grid;gap:16px;max-width:640px}
+.field{display:grid;gap:6px;min-width:0}
+.field label,.field .lbl{font-weight:700;font-size:14px}
+.inp{width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--ink);font:inherit;min-width:0}
+textarea.inp{resize:vertical;line-height:1.5}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.ingrows{display:grid;gap:8px}
+.ingrow{display:grid;grid-template-columns:minmax(0,7.5rem) minmax(0,1fr) 32px;gap:8px;align-items:center}
+.ingrow.head span{font-size:12px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.06em}
+.ingrow .x,.shop .x{border:0;background:none;color:var(--muted);font-size:22px;line-height:1;padding:0 4px}
+.rate{display:flex;gap:4px}
+.rate button{border:0;background:none;font-size:30px;line-height:1;padding:2px;color:var(--line)}
+.rate button[aria-pressed="true"]{color:var(--cornmeal)}
+.starline{color:var(--cornmeal);letter-spacing:1px}
+.btn.danger{color:var(--pepper);border-color:var(--pepper)}
 .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(90px + env(safe-area-inset-bottom,0px));z-index:40;background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:10px;font-weight:600;font-size:14px;box-shadow:var(--shadow);max-width:calc(100% - 32px)}
 @media (max-width:420px){.ings label{grid-template-columns:22px 78px 1fr}.cook-step{font-size:20px}.timer .big{font-size:40px}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
@@ -227,8 +243,10 @@ const PR=Object.fromEntries(PROTEINS.map(p=>[p.id,p]));
 const M=Object.fromEntries(METHODS.map(m=>[m.id,m]));
 const CATS=["All","Mains","Sides","Breads & Breakfast","Desserts","Drinks"];
 
-let store={fav:[],cooked:{},shop:[],quiz:{}};
+let store={fav:[],cooked:{},shop:[],quiz:{},journal:[]};
 try{const v=localStorage.getItem("kk.v1");if(v)store=Object.assign(store,JSON.parse(v));}catch(e){}
+if(!Array.isArray(store.journal))store.journal=[];
+const esc=s=>String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 function save(){try{localStorage.setItem("kk.v1",JSON.stringify(store));}catch(e){}}
 
 const state={tab:"recipes",q:"",cat:"All",easy:false,smode:"spice",stype:"All",protein:"chicken",stack:[],serv:{},checked:{},cook:null,timer:null,copyText:null};
@@ -334,6 +352,10 @@ function viewKitchen(){
   const cooked=Object.keys(store.cooked).length;
   let h='<section class="section"><div class="section-head"><h2>My kitchen</h2></div>'+
     '<div class="stats"><div class="stat"><b>'+cooked+'<span class="muted" style="font-size:14px">/50</span></b><span>Dishes cooked</span></div><div class="stat"><b>'+store.fav.length+'</b><span>Saved</span></div><div class="stat"><b>'+Object.keys(store.quiz).length+'<span class="muted" style="font-size:14px">/'+TECHNIQUES.length+'</span></b><span>Lessons passed</span></div></div>';
+  h+='<div class="block"><div class="section-head"><h2>Cooking journal</h2><span class="mono muted">'+store.journal.length+' meals</span></div>'+
+    '<p class="muted" style="margin:0;max-width:60ch">Your record of every meal you make: what went in, how much, how long it took, and what you\'d change next time.</p>'+
+    '<div class="row"><button class="btn small" data-act="log-new">Log a meal</button>'+(store.journal.length?'<button class="btn small ghost" data-act="journal-copy">Copy journal</button>':'')+'</div>'+
+    (store.journal.length?journalList(store.journal):'<div class="empty">No meals logged yet. Tap "Log a meal," or finish any recipe in cook mode and the entry starts itself.</div>')+'</div>';
   h+='<div class="block"><div class="section-head"><h2>Shopping list</h2><span class="mono muted">'+store.shop.length+' items</span></div>';
   if(!store.shop.length)h+='<div class="empty">Open any recipe and tap "Add to shopping list". Items show up here with the dish they\'re for.</div>';
   else{
@@ -368,7 +390,8 @@ function sheetRecipe(r){
   '<div class="block"><h2>Ingredients</h2><ul class="ings">'+r.i.map((x,i)=>'<li><label><input type="checkbox" data-ing="'+r.id+'" data-i="'+i+'" '+(ck[i]?"checked":"")+'><span class="amt">'+amount(x,f)+'</span><span>'+x[2]+'</span></label></li>').join("")+'</ul>'+
   (f!==1?'<p class="muted" style="margin:0;font-size:13px">Amounts scaled for '+serv+'. Cook times and pan sizes may need adjusting.</p>':'')+'</div>'+
   '<div class="block"><h2>Steps</h2><ol class="steps">'+r.st.map(s=>'<li><div><p>'+s[0]+'</p>'+(s[1]?'<span class="timerpill">'+fmtTime(s[1])+' timer</span>':'')+'</div></li>').join("")+'</ol></div>'+
-  '<div class="actions"><button class="btn" data-act="cook-start" data-id="'+r.id+'">Start cooking</button><button class="btn ghost" data-act="shop-add" data-id="'+r.id+'">Add to shopping list</button><button class="btn ghost" data-act="mark-cooked" data-id="'+r.id+'">'+(store.cooked[r.id]?'Cooked '+store.cooked[r.id]+' · Undo':'Mark as cooked')+'</button></div>';
+  '<div class="actions"><button class="btn" data-act="cook-start" data-id="'+r.id+'">Start cooking</button><button class="btn ghost" data-act="shop-add" data-id="'+r.id+'">Add to shopping list</button><button class="btn ghost" data-act="mark-cooked" data-id="'+r.id+'">'+(store.cooked[r.id]?'Cooked '+store.cooked[r.id]+' · Undo':'Mark as cooked')+'</button><button class="btn ghost" data-act="log-new" data-id="'+r.id+'" style="grid-column:1/-1">Log this meal in my journal</button></div>'+
+  (function(){const es=store.journal.filter(e=>e.rid===r.id);return es.length?'<div class="block"><h2>Your journal entries</h2>'+journalList(es)+'</div>':'';})();
 }
 function waysToCook(r){
   const m=METHOD_OF[r.id],alts=ALT[r.id]||[];
@@ -414,6 +437,7 @@ function renderSheet(){
   else if(top.type==="tech"){const t=T[top.id];title=t.n;body=sheetTech(t);}
   else if(top.type==="spice"){const s=S[top.id];title=s.n;body=sheetSpice(s);}
   else if(top.type==="method"){const m=M[top.id];title=m.n;body=sheetMethod(m);}
+  else if(top.type==="log"){title=top.draft.id?"Edit journal entry":"Log a meal";body=sheetLog(top);}
   const keep=el.hidden?0:el.scrollTop;
   el.innerHTML='<div class="sheet-bar"><div class="wrap"><button class="iconbtn" data-act="back" aria-label="Back">'+ICON.back+'</button><span class="title">'+title+'</span>'+extra+'</div></div><div class="wrap sheet-body">'+body+'</div>';
   el.hidden=false;document.body.style.overflow="hidden";
@@ -462,6 +486,55 @@ function renderCook(){
   el.hidden=false;
 }
 async function lockScreen(){try{if(navigator.wakeLock)wake=await navigator.wakeLock.request("screen");}catch(e){wake=null;}}
+/* ---------- cooking journal ---------- */
+function isoToday(){const d=new Date(),p=n=>String(n).padStart(2,"0");return d.getFullYear()+"-"+p(d.getMonth()+1)+"-"+p(d.getDate());}
+function niceDate(iso){if(!iso)return "";const [y,m,d]=iso.split("-").map(Number);return new Date(y,m-1,d).toLocaleDateString(undefined,{month:"short",day:"numeric",year:"numeric"});}
+function stars(n){return n?"★".repeat(n)+"☆".repeat(5-n):"";}
+function newDraft(rid,cook){
+  const r=R[rid];const f=r?factor(r):1;
+  return {id:null,rid:r?rid:"",name:r?r.n:"",date:isoToday(),serv:r?String(state.serv[rid]||r.s):"",
+    ings:r?r.i.map(x=>({a:amount(x,f),item:x[2]})):[{a:"",item:""}],prep:"",cook:cook?String(cook):"",rating:0,notes:""};
+}
+function syncDraft(){
+  const t=state.stack[state.stack.length-1];if(!t||t.type!=="log")return t;const d=t.draft,v=id=>{const e=document.getElementById(id);return e?e.value:"";};
+  d.name=v("log-name");d.date=v("log-date");d.serv=v("log-serv");d.prep=v("log-prep");d.cook=v("log-cook");d.notes=v("log-notes");
+  const sel=document.getElementById("log-rid");if(sel)d.rid=sel.value;
+  const as=document.querySelectorAll("#sheet .log-a"),is=document.querySelectorAll("#sheet .log-i");
+  d.ings=[...as].map((a,i)=>({a:a.value,item:is[i]?is[i].value:""}));
+  return t;
+}
+function journalList(es){
+  return '<div class="rank">'+es.map(e=>{const bits=[];if(e.cook)bits.push("Cook "+e.cook+" min");if(e.prep)bits.push("Prep "+e.prep+" min");if(e.serv)bits.push("Serves "+e.serv);
+    const note=e.notes?(e.notes.length>90?e.notes.slice(0,90)+"…":e.notes):"";
+    return '<button data-act="log-open" data-id="'+esc(e.id)+'"><b>'+esc(e.name)+'</b><span class="mono muted" style="font-size:13px">'+esc(niceDate(e.date))+'</span><small>'+(e.rating?'<span class="starline">'+stars(e.rating)+'</span> ':'')+esc(bits.join(" · "))+(note?'<br>'+esc(note):'')+'</small></button>';}).join("")+'</div>';
+}
+function entryText(e){
+  let s=e.name+" — "+niceDate(e.date);
+  const meta=[];if(e.serv)meta.push("Serves "+e.serv);if(e.prep)meta.push("Prep "+e.prep+" min");if(e.cook)meta.push("Cook "+e.cook+" min");if(e.rating)meta.push("Rating "+e.rating+"/5");
+  if(meta.length)s+="\n"+meta.join(" · ");
+  if(e.ings.length)s+="\nIngredients used:\n"+e.ings.map(x=>"- "+(x.a?x.a+" ":"")+x.item).join("\n");
+  if(e.notes)s+="\nNotes: "+e.notes;
+  return s;
+}
+function sheetLog(top){
+  const d=top.draft,r=R[d.rid];
+  const opts='<option value="">Something else (type the name below)</option>'+CATS.slice(1).map(c=>'<optgroup label="'+c+'">'+RECIPES.filter(x=>x.c===c).map(x=>'<option value="'+x.id+'"'+(x.id===d.rid?" selected":"")+'>'+x.n+'</option>').join("")+'</optgroup>').join("");
+  return '<div class="eyebrow">Cooking journal</div><h1>'+(d.id?"Edit entry":"Log a meal")+'</h1>'+
+  '<form class="logform" id="logform" novalidate>'+
+  '<div class="field"><label for="log-rid">Recipe</label><select class="inp" id="log-rid">'+opts+'</select></div>'+
+  '<div class="field"><label for="log-name">Dish name</label><input class="inp" id="log-name" type="text" maxlength="80" value="'+esc(d.name)+'" placeholder="e.g. Sunday fried chicken"></div>'+
+  '<div class="two"><div class="field"><label for="log-date">Date made</label><input class="inp" id="log-date" type="date" value="'+esc(d.date)+'"></div><div class="field"><label for="log-serv">Servings</label><input class="inp" id="log-serv" type="number" min="1" max="200" inputmode="numeric" value="'+esc(d.serv)+'"></div></div>'+
+  '<div class="field"><span class="lbl">Ingredients used and how much</span>'+
+    '<div class="ingrows"><div class="ingrow head"><span>Amount</span><span>Ingredient</span><span></span></div>'+
+    d.ings.map((x,i)=>'<div class="ingrow"><input class="inp log-a" id="log-a-'+i+'" type="text" value="'+esc(x.a)+'" placeholder="2 cups" aria-label="Amount '+(i+1)+'"><input class="inp log-i" id="log-i-'+i+'" type="text" value="'+esc(x.item)+'" placeholder="buttermilk" aria-label="Ingredient '+(i+1)+'"><button type="button" class="x" data-act="log-row-del" data-id="'+i+'" aria-label="Remove ingredient '+(i+1)+'">×</button></div>').join("")+
+    '</div><div class="row"><button type="button" class="btn small ghost" data-act="log-row-add">Add ingredient</button>'+(r?'<button type="button" class="btn small ghost" data-act="log-fill">Reset to recipe amounts</button>':'')+'</div></div>'+
+  '<div class="two"><div class="field"><label for="log-prep">Prep time (minutes)</label><input class="inp" id="log-prep" type="number" min="0" inputmode="numeric" value="'+esc(d.prep)+'"></div><div class="field"><label for="log-cook">Cook time (minutes)</label><input class="inp" id="log-cook" type="number" min="0" inputmode="numeric" value="'+esc(d.cook)+'"></div></div>'+
+  (r?'<p class="muted" style="margin:0;font-size:13px">The recipe estimates '+fmtTime(r.t)+' total.'+(d.cook&&!d.id?' Cook time was filled in from cook mode.':'')+'</p>':'')+
+  '<div class="field"><span class="lbl">How did it turn out?</span><div class="rate" role="group" aria-label="Rating">'+[1,2,3,4,5].map(n=>'<button type="button" data-act="log-rate" data-id="'+n+'" aria-pressed="'+(n<=d.rating)+'" aria-label="'+n+' out of 5">★</button>').join("")+'</div></div>'+
+  '<div class="field"><label for="log-notes">Notes</label><textarea class="inp" id="log-notes" rows="5" placeholder="What worked, what you swapped, what to change next time">'+esc(d.notes)+'</textarea></div>'+
+  '<div class="row"><button type="button" class="btn" data-act="log-save">Save entry</button>'+(d.id?'<button type="button" class="btn ghost danger" data-act="log-del">'+(top.confirmDel?"Tap again to delete":"Delete entry")+'</button>':'')+'</div>'+
+  '</form>';
+}
 function today(){const d=new Date();return d.toLocaleDateString(undefined,{month:"short",day:"numeric",year:"numeric"});}
 
 /* ---------- toast ---------- */
@@ -490,12 +563,32 @@ document.addEventListener("click",e=>{
     case "shop-add":{const r=R[id],f=factor(r);let n=0;r.i.forEach(x=>{const text=(amount(x,f)+" "+x[2]).trim();if(!store.shop.some(s=>s.text===text&&s.from===r.n)){store.shop.push({text,from:r.n,done:false});n++;}});save();toast(n?n+" items added to your shopping list":"Already on your list");break;}
     case "mark-cooked":if(store.cooked[id]){delete store.cooked[id];toast("Unmarked");}else{store.cooked[id]=today();toast("Nice work. Marked as cooked.");}save();refreshSheet();render();break;
     case "quiz":{state.quizPick=state.quizPick||{};const i=Number(b.dataset.i);state.quizPick[id]=i;if(i===T[id].a){store.quiz[id]=true;save();}refreshSheet();render();break;}
-    case "cook-start":state.cook={id,i:0};lockScreen();renderCook();break;
+    case "cook-start":state.cook={id,i:0,started:Date.now()};lockScreen();renderCook();break;
     case "cook-next":state.cook.i++;renderCook();$("#cook .cook-main").scrollTop=0;break;
     case "cook-prev":if(state.cook.i>0)state.cook.i--;renderCook();break;
     case "cook-goto":state.cook.i=Number(id);renderCook();break;
     case "cook-close":state.cook=null;if(state.timer){clearInterval(state.timer.iv);state.timer=null;}try{wake&&wake.release();}catch(e){}renderCook();break;
-    case "cook-finish":{const rid=state.cook.id;store.cooked[rid]=today();save();state.cook=null;if(state.timer){clearInterval(state.timer.iv);state.timer=null;}try{wake&&wake.release();}catch(e){}renderCook();refreshSheet();render();toast(R[rid].n+" is in the books. Well done.");break;}
+    case "cook-finish":{const rid=state.cook.id,mins=Math.max(1,Math.round((Date.now()-(state.cook.started||Date.now()))/60000));store.cooked[rid]=today();save();state.cook=null;if(state.timer){clearInterval(state.timer.iv);state.timer=null;}try{wake&&wake.release();}catch(e){}renderCook();render();
+      state.stack.push({type:"log",draft:newDraft(rid,mins)});renderSheet();toast(R[rid].n+" is done. Log what you used.");break;}
+    case "log-new":state.stack.push({type:"log",draft:newDraft(id||"","")});renderSheet();break;
+    case "log-open":{const e=store.journal.find(x=>x.id===id);if(e){state.stack.push({type:"log",draft:JSON.parse(JSON.stringify(e))});renderSheet();}break;}
+    case "log-row-add":{const t=syncDraft();t.draft.ings.push({a:"",item:""});refreshSheet();const rows=document.querySelectorAll("#sheet .log-a");if(rows.length)rows[rows.length-1].focus();break;}
+    case "log-row-del":{const t=syncDraft();t.draft.ings.splice(Number(id),1);if(!t.draft.ings.length)t.draft.ings.push({a:"",item:""});refreshSheet();break;}
+    case "log-fill":{const t=syncDraft(),r=R[t.draft.rid];if(r){const f=(Number(t.draft.serv)||r.s)/r.s;t.draft.ings=r.i.map(x=>({a:amount(x,f),item:x[2]}));}refreshSheet();break;}
+    case "log-rate":{const t=syncDraft(),n=Number(id);t.draft.rating=t.draft.rating===n?0:n;refreshSheet();break;}
+    case "log-save":{const t=syncDraft(),d=t.draft;
+      if(!d.name.trim()){toast("Add the dish name first");const n=$("#log-name");n&&n.focus();break;}
+      d.ings=d.ings.filter(x=>x.a.trim()||x.item.trim());
+      if(d.id){const i=store.journal.findIndex(x=>x.id===d.id);if(i>=0)store.journal[i]=d;else store.journal.unshift(d);}
+      else{d.id=Date.now().toString(36);store.journal.unshift(d);}
+      store.journal.sort((a,b)=>(b.date||"").localeCompare(a.date||""));
+      save();state.stack.pop();renderSheet();render();toast("Saved to your cooking journal");break;}
+    case "log-del":{const t=state.stack[state.stack.length-1];if(!t.confirmDel){syncDraft();t.confirmDel=true;refreshSheet();break;}
+      store.journal=store.journal.filter(x=>x.id!==t.draft.id);save();state.stack.pop();renderSheet();render();toast("Entry deleted");break;}
+    case "journal-copy":{const text="Kayla's Kitchen cooking journal\n\n"+store.journal.map(entryText).join("\n\n----\n\n");
+      const fallback=()=>{state.copyText=text;render();const ta=$("#copyfall");if(ta){ta.focus();ta.select();}};
+      try{navigator.clipboard.writeText(text).then(()=>{state.copyText=null;toast("Journal copied");},fallback);}catch(err){fallback();}
+      break;}
     case "timer-go":{const r=R[state.cook.id],i=state.cook.i,tm=state.timer;
       if(tm&&tm.id===r.id&&tm.step===i&&!tm.done&&tm.rem>0){tm.end=Date.now()+tm.rem*1000;tm.running=true;tm.iv=setInterval(tick,500);}
       else{startTimer(i,r.st[i][1]*60);state.timer.id=r.id;}
@@ -516,6 +609,10 @@ document.addEventListener("change",e=>{
   const t=e.target;
   if(t.dataset.ing){const c=state.checked[t.dataset.ing]=state.checked[t.dataset.ing]||{};c[t.dataset.i]=t.checked;}
   if(t.dataset.shop!==undefined){store.shop[Number(t.dataset.shop)].done=t.checked;save();}
+  if(t.id==="log-rid"){const top=syncDraft(),d=top.draft,r=R[d.rid];
+    if(r){if(!d.name.trim()||RECIPES.some(x=>x.n===d.name))d.name=r.n;if(!d.serv)d.serv=String(r.s);
+      if(d.ings.every(x=>!x.a.trim()&&!x.item.trim())){const f=(Number(d.serv)||r.s)/r.s;d.ings=r.i.map(x=>({a:amount(x,f),item:x[2]}));}}
+    refreshSheet();}
 });
 document.addEventListener("input",e=>{if(e.target.id==="q"){state.q=e.target.value;$("#list").innerHTML=listHTML();}});
 document.addEventListener("keydown",e=>{if(e.key==="Escape"){if(state.cook){$("[data-act=cook-close]").click();}else if(state.stack.length){state.stack.pop();renderSheet();render();}}});

@@ -22,6 +22,12 @@ A free, single-page interactive cooking app (one HTML file, no backend, no paid 
 - Every recipe page has "Ways to cook it": the method its steps use, plus alternate methods with short instructions (22 recipes have swaps).
 - Data: `METHODS`, `METHOD_OF` (recipe id → primary method), `ALT` (recipe id → [[method, note]]) in `data4.js`.
 
+## v1.2: Cooking journal
+- My Kitchen tab has a Cooking journal: log any meal (one of the 50 recipes or a custom dish) with date, servings, each ingredient and the amount actually used, prep time, cook time, a 1–5 star rating and free-form notes.
+- Finishing a recipe in cook mode opens a new entry pre-filled with the recipe's ingredients at the chosen servings and the real elapsed cook time.
+- Recipe pages show "Log this meal" and list past journal entries for that dish. Entries can be edited, deleted (two-tap confirm) and copied as text.
+- Stored per device in localStorage under `kk.v1` → `journal`.
+
 ## Workflow (trigger → generate → assemble → publish → track)
 1. **Trigger**: a request to add recipes, lessons, seasonings or features.
 2. **Generate**: research dishes on the web for popularity; write recipes in our own words in the data format below.
@@ -41,4 +47,4 @@ Recipe photos, more regional dishes (Hot Brown, Brunswick stew, tomato pie), a m
 ## Hosting (public link)
 - Live site: https://blacey205.github.io/kaylas-kitchen/ (free GitHub Pages, no account needed to view)
 - Repo: github.com/BLacey205/kaylas-kitchen. `index.html` is the live site; `src/` holds `app.html` and `data1–4.js`.
-- To publish an update: rebuild `index.html` from `src/` (inject data at `/*DATA*/`, wrap in a full HTML document), run the self-checks, commit and push to `main`. Pages redeploys in 1–2 minutes.
+- To publish an update: edit `src/`, run `python3 build.py` (writes `index.html` for the website and `dist/artifact.html` for the Claude artifact), run the self-checks, commit and push to `main`. Pages redeploys in 1–2 minutes.
