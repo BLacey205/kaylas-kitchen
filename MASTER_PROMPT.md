@@ -36,6 +36,11 @@ A free, single-page interactive cooking app (one HTML file, no backend, no paid 
 - Every recipe also has "Watch on YouTube" and "More videos" (a YouTube search) as a fallback if a creator removes a video or turns off embedding.
 - Maintenance: every few months, re-run the vidIQ lookup on the IDs in `data5.js`. Any ID missing from the results has been removed; replace it from `video_candidates.json` or a new search.
 
+## v1.3.1: Video card made prominent
+- Every recipe page now opens with a large tappable "Watch the cook-along" card directly under the title (YouTube thumbnail over a green panel, play button, video title, channel, length). Every recipe in the list shows a "Cook-along video · N min" tag.
+- The card plays inline only on the GitHub Pages site (detected by hostname); everywhere else, including inside Claude, it is a link that opens YouTube in a new tab. This replaced a check that guessed the Claude host by name and could leave an empty player inside Claude.
+- Decision (from Kayla's Kitchen owner): a video only needs to be the same dish, not the identical recipe. Differences get reconciled later using cooking-journal observations.
+
 ## v1.4: Meal planner (optional Plan tab)
 - New Plan tab (bottom nav is now Recipes, Plan, Spices, Learn, Kitchen). Fully optional: nothing else depends on it.
 - Week view (Monday to Sunday) with previous/next week. Each day lists planned dishes with a servings stepper, remove button and any plan-ahead note (e.g. "Soak beans overnight").
