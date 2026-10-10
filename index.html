@@ -5,6 +5,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="description" content="Kayla's Kitchen: 50 Southern comfort classics with step-by-step cook mode, herbs and spices guide, cooking methods, lessons and a cooking journal.">
 <meta name="theme-color" content="#2D5B44">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="32x32" href="icons/icon-32.png">
+<link rel="apple-touch-icon" href="icons/icon-180.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Kayla's Kitchen">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <title>Kayla's Kitchen</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -41,6 +48,9 @@ h1,h2,h3{font-family:var(--display);font-weight:700;line-height:1.15;text-wrap:b
 /* Header */
 .hero{background-color:var(--bg);background-image:repeating-linear-gradient(0deg,var(--ging) 0 14px,transparent 14px 28px),repeating-linear-gradient(90deg,var(--ging) 0 14px,transparent 14px 28px);border-bottom:1px solid var(--line)}
 .hero .wrap{padding-block:22px 20px}
+.herorow{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.installbtn{display:inline-flex;align-items:center;gap:8px;border:0;border-radius:999px;padding:10px 16px;background:var(--collard);color:var(--on-collard);font-weight:700;font-size:14px;box-shadow:0 2px 0 rgba(0,0,0,.15)}
+.installbtn svg{width:18px;height:18px}
 .plate{display:inline-flex;flex-direction:column;gap:2px;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px 18px;box-shadow:0 2px 0 var(--line)}
 .plate h1{font-size:28px;color:var(--collard)}
 .plate p{margin:0;color:var(--muted);font-size:13.5px}
@@ -264,11 +274,12 @@ textarea.inp{resize:vertical;line-height:1.5}
 
 
 <header class="hero" id="hero">
-  <div class="wrap">
+  <div class="wrap herorow">
     <div class="plate">
       <h1>Kayla's Kitchen</h1>
       <p>50 Southern comfort classics, taught step by step</p>
     </div>
+    <button class="installbtn" id="installBtn" data-act="install" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12M7 10l5 5 5-5"/><path d="M5 21h14"/></svg>Install the app</button>
   </div>
 </header>
 <main id="main" class="wrap"></main>
@@ -1169,6 +1180,7 @@ function renderSheet(){
   else if(top.type==="pick-recipe"){title="Add a dish";body=sheetPickRecipe(top);}
   else if(top.type==="pick-day"){title="Add to meal plan";body=sheetPickDay(top);}
   else if(top.type==="grocery"){title="Grocery list";body=sheetGrocery(top);}
+  else if(top.type==="install"){title="Install the app";body=sheetInstall();}
   const keep=el.hidden?0:el.scrollTop;
   el.innerHTML='<div class="sheet-bar"><div class="wrap"><button class="iconbtn" data-act="back" aria-label="Back">'+ICON.back+'</button><span class="title">'+title+'</span>'+extra+'</div></div><div class="wrap sheet-body">'+body+'</div>';
   el.hidden=false;document.body.style.overflow="hidden";
@@ -1197,6 +1209,21 @@ function startTimer(step,sec){
 /* YouTube players can be embedded on the public website. Inside Claude the page cannot embed other sites, so it links out instead. */
 /* Only embed where we know it works (the GitHub Pages site or local testing). Everywhere else the video card opens YouTube. */
 const CAN_EMBED=/(^|\.)github\.io$/i.test(location.hostname)||/^(localhost|127\.0\.0\.1)$/.test(location.hostname);
+
+/* ---------- install to home screen (public site only) ---------- */
+let installPrompt=null;
+const isStandalone=()=>{try{return matchMedia("(display-mode: standalone)").matches||navigator.standalone===true;}catch(e){return false;}};
+const isIOS=/iphone|ipad|ipod/i.test(navigator.userAgent)||(navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1);
+function showInstall(){const b=$("#installBtn");if(b&&CAN_EMBED&&!isStandalone())b.hidden=false;}
+window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();installPrompt=e;showInstall();});
+window.addEventListener("appinstalled",()=>{const b=$("#installBtn");if(b)b.hidden=true;installPrompt=null;toast("Installed. Find Kayla's Kitchen on your home screen.");});
+if(isIOS)showInstall(); /* iPhone never fires the install event, so show how-to steps instead */
+function sheetInstall(){
+  return '<div class="eyebrow">Kayla\'s Kitchen app</div><h1>Put it on your home screen</h1><p class="muted" style="margin:0;max-width:60ch">It opens like a regular app, full screen with its own icon, and your recipes still open with no signal. It\'s free, and there\'s no app store needed.</p>'+
+  '<div class="block"><h2>iPhone or iPad (Safari)</h2><ol class="points"><li>Tap the <b>Share</b> button (the square with an arrow pointing up).</li><li>Scroll down and tap <b>Add to Home Screen</b>.</li><li>Tap <b>Add</b>.</li></ol></div>'+
+  '<div class="block"><h2>Android (Chrome)</h2><ol class="points"><li>Tap the <b>⋮</b> menu in the top corner.</li><li>Tap <b>Install app</b> or <b>Add to Home screen</b>.</li></ol></div>'+
+  '<div class="block"><h2>Chromebook or computer (Chrome or Edge)</h2><ol class="points"><li>Click the <b>install</b> icon at the right end of the address bar.</li><li>Click <b>Install</b>.</li></ol></div>';
+}
 function ytWatch(v){return "https://www.youtube.com/watch?v="+v.id;}
 function ytSearch(r){return "https://www.youtube.com/results?search_query="+encodeURIComponent(r.n+" recipe");}
 function ytEmbed(v,autoplay){return "https://www.youtube-nocookie.com/embed/"+v.id+"?rel=0&playsinline=1"+(autoplay?"&autoplay=1":"");}
@@ -1462,6 +1489,8 @@ document.addEventListener("click",e=>{
     case "cook-close":state.cook=null;if(state.timer){clearInterval(state.timer.iv);state.timer=null;}try{wake&&wake.release();}catch(e){}renderCook();break;
     case "cook-finish":{const rid=state.cook.id,mins=Math.max(1,Math.round((Date.now()-(state.cook.started||Date.now()))/60000));store.cooked[rid]=today();save();state.cook=null;if(state.timer){clearInterval(state.timer.iv);state.timer=null;}try{wake&&wake.release();}catch(e){}renderCook();render();
       state.stack.push({type:"log",draft:newDraft(rid,mins)});renderSheet();toast(R[rid].n+" is done. Log what you used.");break;}
+    case "install":if(installPrompt){const p=installPrompt;installPrompt=null;p.prompt();(p.userChoice||Promise.resolve()).then(c=>{if(c&&c.outcome==="accepted")b.hidden=true;else showInstall();},()=>{});}
+      else{state.stack.push({type:"install"});renderSheet();}break;
     case "plan-week":{const n=Number(id);state.planWeek=n?isoOf(addDays(parseISO(curWeek()),n)):isoOf(mondayOf(new Date()));state.planClear=false;render();break;}
     case "plan-auto":{const n=autoFill();pruneOldPlan();save();render();toast(n?"Filled "+n+" day"+(n===1?"":"s")+". Swap anything you like.":"Every day already has a dish.");break;}
     case "plan-add":state.stack.push({type:"pick-recipe",day:id,q:""});renderSheet();break;
@@ -1537,5 +1566,8 @@ render();
 })();
 </script>
 
+<script>
+if ("serviceWorker" in navigator) { window.addEventListener("load", function () { navigator.serviceWorker.register("sw.js").catch(function () {}); }); }
+</script>
 </body>
 </html>
