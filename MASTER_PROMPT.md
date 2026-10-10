@@ -36,6 +36,14 @@ A free, single-page interactive cooking app (one HTML file, no backend, no paid 
 - Every recipe also has "Watch on YouTube" and "More videos" (a YouTube search) as a fallback if a creator removes a video or turns off embedding.
 - Maintenance: every few months, re-run the vidIQ lookup on the IDs in `data5.js`. Any ID missing from the results has been removed; replace it from `video_candidates.json` or a new search.
 
+## v1.4: Meal planner (optional Plan tab)
+- New Plan tab (bottom nav is now Recipes, Plan, Spices, Learn, Kitchen). Fully optional: nothing else depends on it.
+- Week view (Monday to Sunday) with previous/next week. Each day lists planned dishes with a servings stepper, remove button and any plan-ahead note (e.g. "Soak beans overnight").
+- "Fill the week for me" fills only empty days: a main plus a side each day; quicker mains (≤2 hrs, no overnight prep, Easy/Medium) on weeknights; no repeated dishes; never the same protein two days in a row; a dessert on Sunday.
+- Add dishes from the Plan tab (searchable picker) or from any recipe page ("Add to meal plan" → choose from the next 14 days).
+- "Build grocery list" combines every ingredient for the week, scaled to each dish's servings, merges duplicates (same item in two units shows "1 cup + 2"), rounds whole items up to what you can buy, and sorts by aisle: Meat & Seafood, Produce, Dairy & Refrigerated, Bakery, Frozen, Pantry, Spices & Seasonings, and Pantry staples (check first). It can be copied as text or sent to the Shopping list in My Kitchen.
+- Stored per device in localStorage `kk.v1` → `plan` (ISO date → [{rid, serv}]); days older than 8 weeks are pruned.
+
 ## Workflow (trigger → generate → assemble → publish → track)
 1. **Trigger**: a request to add recipes, lessons, seasonings or features.
 2. **Generate**: research dishes on the web for popularity; write recipes in our own words in the data format below.

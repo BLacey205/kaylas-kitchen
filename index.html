@@ -90,7 +90,7 @@ h1,h2,h3{font-family:var(--display);font-weight:700;line-height:1.15;text-wrap:b
 
 /* Bottom nav */
 .nav{position:fixed;left:0;right:0;bottom:0;z-index:10;background:var(--surface);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px)}
-.nav .wrap{display:grid;grid-template-columns:repeat(4,1fr)}
+.nav .wrap{display:grid;grid-template-columns:repeat(5,1fr)}
 .nav button{border:0;background:none;display:grid;justify-items:center;gap:2px;padding:9px 2px 10px;font-size:11.5px;font-weight:600;color:var(--muted)}
 .nav button svg{width:22px;height:22px}
 .nav button[aria-current="page"]{color:var(--collard)}
@@ -193,6 +193,26 @@ details.ingdrawer ul{margin:8px 0 0;padding-left:18px}
 .shop .x{border:0;background:none;color:var(--muted);font-size:20px;line-height:1;padding:0 4px}
 .copyfall{width:100%;min-height:140px;font-family:var(--mono);font-size:13px;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--ink);padding:10px}
 
+/* Meal planner */
+.weeknav{display:grid;grid-template-columns:40px 1fr 40px;gap:10px;align-items:center;text-align:center;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:8px}
+.weeknav div{display:grid;gap:2px}
+.weeknav b{font-family:var(--display);font-size:17px}
+.weeknav span{font-size:12.5px}
+.iconbtn.flip svg{transform:scaleX(-1)}
+.days{display:grid;gap:10px}
+.daycard{display:grid;gap:8px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.daycard.today{border-color:var(--collard);box-shadow:inset 0 0 0 1px var(--collard)}
+.dayhead{display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.dayhead b{font-family:var(--display);font-size:16.5px}
+.planlist{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.planlist li{display:grid;grid-template-columns:minmax(0,1fr) auto 28px;gap:8px;align-items:center;border-top:1px solid var(--line);padding-top:8px}
+.pl-main{display:grid;gap:1px;min-width:0}
+.pl-name{border:0;background:none;padding:0;text-align:left;font-weight:700;font-size:15px;color:var(--ink)}
+.ahead{color:var(--pepper);font-weight:600}
+.planlist .x{border:0;background:none;color:var(--muted);font-size:22px;line-height:1;padding:0 4px}
+.adddish{justify-self:start;border:1px dashed var(--line);background:none;border-radius:8px;padding:6px 12px;font-weight:600;font-size:13.5px;color:var(--collard)}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.for{display:block;color:var(--muted);font-size:12px}
 /* Cook-along video */
 .player{position:relative;width:100%;max-width:100%;aspect-ratio:16/9;border-radius:12px;overflow:hidden;background:#000}
 .player iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
@@ -242,9 +262,10 @@ textarea.inp{resize:vertical;line-height:1.5}
 <nav class="nav" aria-label="Sections">
   <div class="wrap">
     <button data-act="tab" data-id="recipes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5z"/><path d="M4 20.5A2.5 2.5 0 0 0 6.5 23H20"/><path d="M9 8h7M9 11.5h5"/></svg>Recipes</button>
-    <button data-act="tab" data-id="spices"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 19c0-8 5-14 15-15-1 10-7 15-15 15z"/><path d="M5 19 13 11"/></svg>Herbs &amp; Spices</button>
+    <button data-act="tab" data-id="plan"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="15.5" rx="2"/><path d="M3.5 10h17M8 3v4M16 3v4"/><path d="M8 14h3M8 17h6"/></svg>Plan</button>
+    <button data-act="tab" data-id="spices"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 19c0-8 5-14 15-15-1 10-7 15-15 15z"/><path d="M5 19 13 11"/></svg>Spices</button>
     <button data-act="tab" data-id="learn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 9l10-5 10 5-10 5z"/><path d="M6 11v5c3 2.5 9 2.5 12 0v-5"/></svg>Learn</button>
-    <button data-act="tab" data-id="kitchen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/><path d="M10 20v-5h4v5"/></svg>My Kitchen</button>
+    <button data-act="tab" data-id="kitchen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/><path d="M10 20v-5h4v5"/></svg>Kitchen</button>
   </div>
 </nav>
 
@@ -934,13 +955,14 @@ const PR=Object.fromEntries(PROTEINS.map(p=>[p.id,p]));
 const M=Object.fromEntries(METHODS.map(m=>[m.id,m]));
 const CATS=["All","Mains","Sides","Breads & Breakfast","Desserts","Drinks"];
 
-let store={fav:[],cooked:{},shop:[],quiz:{},journal:[]};
+let store={fav:[],cooked:{},shop:[],quiz:{},journal:[],plan:{}};
 try{const v=localStorage.getItem("kk.v1");if(v)store=Object.assign(store,JSON.parse(v));}catch(e){}
 if(!Array.isArray(store.journal))store.journal=[];
 const esc=s=>String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 function save(){try{localStorage.setItem("kk.v1",JSON.stringify(store));}catch(e){}}
 
-const state={tab:"recipes",q:"",cat:"All",easy:false,smode:"spice",stype:"All",protein:"chicken",stack:[],serv:{},checked:{},cook:null,timer:null,copyText:null};
+if(!store.plan||typeof store.plan!=="object"||Array.isArray(store.plan))store.plan={};
+const state={planWeek:null,tab:"recipes",q:"",cat:"All",easy:false,smode:"spice",stype:"All",protein:"chicken",stack:[],serv:{},checked:{},cook:null,timer:null,copyText:null};
 
 const ICON={
   back:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>',
@@ -1062,7 +1084,7 @@ function viewKitchen(){
   return h+'</section>';
 }
 function render(){
-  const v={recipes:viewRecipes,spices:viewSpices,learn:viewLearn,kitchen:viewKitchen}[state.tab]();
+  const v={recipes:viewRecipes,plan:viewPlan,spices:viewSpices,learn:viewLearn,kitchen:viewKitchen}[state.tab]();
   $("#main").innerHTML=v;
   document.querySelectorAll(".nav button").forEach(b=>b.setAttribute("aria-current",b.dataset.id===state.tab?"page":"false"));
 }
@@ -1082,7 +1104,7 @@ function sheetRecipe(r){
   '<div class="block"><h2>Ingredients</h2><ul class="ings">'+r.i.map((x,i)=>'<li><label><input type="checkbox" data-ing="'+r.id+'" data-i="'+i+'" '+(ck[i]?"checked":"")+'><span class="amt">'+amount(x,f)+'</span><span>'+x[2]+'</span></label></li>').join("")+'</ul>'+
   (f!==1?'<p class="muted" style="margin:0;font-size:13px">Amounts scaled for '+serv+'. Cook times and pan sizes may need adjusting.</p>':'')+'</div>'+
   '<div class="block"><h2>Steps</h2><ol class="steps">'+r.st.map(s=>'<li><div><p>'+s[0]+'</p>'+(s[1]?'<span class="timerpill">'+fmtTime(s[1])+' timer</span>':'')+'</div></li>').join("")+'</ol></div>'+
-  '<div class="actions"><button class="btn" data-act="cook-start" data-id="'+r.id+'">Start cooking</button><button class="btn ghost" data-act="shop-add" data-id="'+r.id+'">Add to shopping list</button><button class="btn ghost" data-act="mark-cooked" data-id="'+r.id+'">'+(store.cooked[r.id]?'Cooked '+store.cooked[r.id]+' · Undo':'Mark as cooked')+'</button><button class="btn ghost" data-act="log-new" data-id="'+r.id+'" style="grid-column:1/-1">Log this meal in my journal</button></div>'+
+  '<div class="actions"><button class="btn" data-act="cook-start" data-id="'+r.id+'">Start cooking</button><button class="btn ghost" data-act="plan-day-pick" data-id="'+r.id+'">Add to meal plan</button><button class="btn ghost" data-act="shop-add" data-id="'+r.id+'">Add to shopping list</button><button class="btn ghost" data-act="mark-cooked" data-id="'+r.id+'" style="grid-column:1/-1">'+(store.cooked[r.id]?'Cooked '+store.cooked[r.id]+' · Undo':'Mark as cooked')+'</button><button class="btn ghost" data-act="log-new" data-id="'+r.id+'" style="grid-column:1/-1">Log this meal in my journal</button></div>'+
   (function(){const es=store.journal.filter(e=>e.rid===r.id);return es.length?'<div class="block"><h2>Your journal entries</h2>'+journalList(es)+'</div>':'';})();
 }
 function waysToCook(r){
@@ -1130,6 +1152,9 @@ function renderSheet(){
   else if(top.type==="spice"){const s=S[top.id];title=s.n;body=sheetSpice(s);}
   else if(top.type==="method"){const m=M[top.id];title=m.n;body=sheetMethod(m);}
   else if(top.type==="log"){title=top.draft.id?"Edit journal entry":"Log a meal";body=sheetLog(top);}
+  else if(top.type==="pick-recipe"){title="Add a dish";body=sheetPickRecipe(top);}
+  else if(top.type==="pick-day"){title="Add to meal plan";body=sheetPickDay(top);}
+  else if(top.type==="grocery"){title="Grocery list";body=sheetGrocery(top);}
   const keep=el.hidden?0:el.scrollTop;
   el.innerHTML='<div class="sheet-bar"><div class="wrap"><button class="iconbtn" data-act="back" aria-label="Back">'+ICON.back+'</button><span class="title">'+title+'</span>'+extra+'</div></div><div class="wrap sheet-body">'+body+'</div>';
   el.hidden=false;document.body.style.overflow="hidden";
@@ -1203,6 +1228,129 @@ function renderCook(){
   el.hidden=false;
 }
 async function lockScreen(){try{if(navigator.wakeLock)wake=await navigator.wakeLock.request("screen");}catch(e){wake=null;}}
+/* ---------- meal planner ---------- */
+const DAYNAMES=["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
+function isoOf(d){const p=n=>String(n).padStart(2,"0");return d.getFullYear()+"-"+p(d.getMonth()+1)+"-"+p(d.getDate());}
+function parseISO(s){const [y,m,d]=s.split("-").map(Number);return new Date(y,m-1,d);}
+function mondayOf(d){const x=new Date(d.getFullYear(),d.getMonth(),d.getDate());x.setDate(x.getDate()-((x.getDay()+6)%7));return x;}
+function addDays(d,n){const x=new Date(d.getFullYear(),d.getMonth(),d.getDate());x.setDate(x.getDate()+n);return x;}
+function shortDate(d){return d.toLocaleDateString(undefined,{month:"short",day:"numeric"});}
+function curWeek(){if(!state.planWeek)state.planWeek=isoOf(mondayOf(new Date()));return state.planWeek;}
+function weekDays(){const m=parseISO(curWeek());return [0,1,2,3,4,5,6].map(i=>isoOf(addDays(m,i)));}
+function dayList(iso){return (store.plan[iso]||[]).filter(e=>R[e.rid]);}
+function planEntries(days){return days.flatMap(d=>dayList(d).map(e=>({day:d,rid:e.rid,serv:e.serv})));}
+function addToPlan(day,rid,serv){(store.plan[day]=store.plan[day]||[]).push({rid,serv:serv||R[rid].s});save();}
+function pruneOldPlan(){/* keep the plan from growing forever: drop days older than 8 weeks */const cut=isoOf(addDays(new Date(),-56));Object.keys(store.plan).forEach(k=>{if(k<cut||!store.plan[k].length)delete store.plan[k];});}
+
+function viewPlan(){
+  const days=weekDays(),today=isoOf(new Date()),thisWeek=isoOf(mondayOf(new Date()));
+  const ents=planEntries(days),servs=ents.reduce((a,e)=>a+Number(e.serv||0),0);
+  const empty=days.filter(d=>!dayList(d).length).length;
+  let h='<section class="section"><div class="section-head"><h2>Meal planner</h2>'+(curWeek()!==thisWeek?'<button class="chip" data-act="plan-week" data-id="0">Back to this week</button>':'')+'</div>'+
+    '<div class="weeknav"><button class="iconbtn" data-act="plan-week" data-id="-7" aria-label="Previous week">'+ICON.back+'</button><div><b>Week of '+shortDate(parseISO(days[0]))+'</b><span class="muted mono">'+ents.length+' dish'+(ents.length===1?"":"es")+' · '+servs+' servings</span></div><button class="iconbtn flip" data-act="plan-week" data-id="7" aria-label="Next week">'+ICON.back+'</button></div>'+
+    '<div class="row">'+(empty?'<button class="btn small" data-act="plan-auto">Fill '+(empty===7?'the week':empty+' empty day'+(empty===1?'':'s'))+' for me</button>':'')+
+    '<button class="btn small'+(empty?' ghost':'')+'" data-act="plan-grocery"'+(ents.length?'':' disabled')+'>Build grocery list</button>'+
+    (ents.length?'<button class="btn small ghost danger" data-act="plan-clear">'+(state.planClear?'Tap again to clear week':'Clear week')+'</button>':'')+'</div>';
+  if(!ents.length)h+='<div class="empty">Nothing planned this week yet. Tap "Fill the week for me" for a balanced starting point, or add dishes day by day.</div>';
+  h+='<div class="days">'+days.map((d,i)=>{const list=dayList(d),dt=parseISO(d);
+    return '<div class="daycard'+(d===today?' today':'')+'"><div class="dayhead"><b>'+DAYNAMES[i]+'</b><span class="muted mono">'+shortDate(dt)+'</span>'+(d===today?'<span class="tag Herb">Today</span>':'')+'</div>'+
+      (list.length?'<ul class="planlist">'+list.map((e,j)=>{const r=R[e.rid];
+        return '<li><div class="pl-main"><button class="pl-name" data-act="plan-open" data-day="'+d+'" data-i="'+j+'">'+r.n+'</button><span class="muted" style="font-size:12.5px">'+fmtTime(r.t)+' · '+DIFF[r.d]+(r.w?' · <span class="ahead">Plan ahead: '+r.w+'</span>':'')+'</span></div>'+
+          '<span class="stepper"><button data-act="plan-serv" data-day="'+d+'" data-i="'+j+'" data-d="-1" aria-label="Fewer servings of '+r.n+'">−</button><b class="mono" title="servings">'+e.serv+'</b><button data-act="plan-serv" data-day="'+d+'" data-i="'+j+'" data-d="1" aria-label="More servings of '+r.n+'">+</button></span>'+
+          '<button class="x" data-act="plan-del" data-day="'+d+'" data-i="'+j+'" aria-label="Remove '+r.n+' from '+DAYNAMES[i]+'">×</button></li>';}).join("")+'</ul>':'')+
+      '<button class="adddish" data-act="plan-add" data-id="'+d+'">+ Add dish</button></div>';}).join("")+'</div>';
+  return h+'</section>';
+}
+
+/* Fill empty days: a main plus a side each day, quicker mains on weeknights, no repeats, no same protein two days running, dessert on Sunday. */
+function autoFill(){
+  const days=weekDays();const used=new Set(planEntries(days).map(e=>e.rid));let filled=0,lastP=null;
+  const pick=(pool)=>pool.length?pool[Math.floor(Math.random()*pool.length)]:null;
+  days.forEach((d,i)=>{
+    const cur=dayList(d);if(cur.length){const m=cur.map(e=>R[e.rid]).find(r=>r.c==="Mains");lastP=m?m.p:lastP;return;}
+    const weekday=i<5;const mains=RECIPES.filter(r=>r.c==="Mains"&&!used.has(r.id));
+    let m=pick(mains.filter(r=>r.p!==lastP&&(!weekday||(r.t<=120&&!r.w&&r.d<=2))))||pick(mains.filter(r=>r.p!==lastP))||pick(mains)||pick(RECIPES.filter(r=>r.c==="Mains"));
+    if(!m)return;addToPlan(d,m.id);used.add(m.id);lastP=m.p;
+    const sides=RECIPES.filter(r=>(r.c==="Sides"||r.id==="skillet-cornbread"||r.id==="biscuits")&&!used.has(r.id)&&(!weekday||r.t<=90));
+    const s=pick(sides)||pick(RECIPES.filter(r=>r.c==="Sides"));if(s){addToPlan(d,s.id);used.add(s.id);}
+    if(i===6){const ds=pick(RECIPES.filter(r=>r.c==="Desserts"&&!used.has(r.id)));if(ds){addToPlan(d,ds.id);used.add(ds.id);}}
+    filled++;
+  });
+  return filled;
+}
+
+function pickListHTML(t){
+  const q=(t.q||"").trim().toLowerCase();
+  const list=RECIPES.filter(r=>!q||r.n.toLowerCase().includes(q)||r.c.toLowerCase().includes(q)||r.i.some(x=>x[2].toLowerCase().includes(q)));
+  if(!list.length)return '<div class="empty">No dishes match that.</div>';
+  return CATS.slice(1).map(c=>{const g=list.filter(r=>r.c===c);return g.length?'<div class="block"><span class="eyebrow">'+c+'</span><div class="rank">'+g.map(r=>'<button data-act="plan-pick" data-id="'+r.id+'"><b>'+r.n+'</b><span class="mono muted" style="font-size:12.5px">'+fmtTime(r.t)+'</span><small>'+DIFF[r.d]+' · serves '+r.s+(r.w?' · plan ahead: '+r.w:'')+'</small></button>').join("")+'</div></div>':'';}).join("");
+}
+function sheetPickRecipe(t){
+  const dt=parseISO(t.day);
+  return '<div class="eyebrow">Meal planner</div><h1>'+DAYNAMES[(dt.getDay()+6)%7]+', '+shortDate(dt)+'</h1>'+
+    '<input class="search" id="pq" type="search" placeholder="Search dishes or ingredients" value="'+esc(t.q||"")+'" aria-label="Search dishes">'+
+    '<div id="pick-list" class="block">'+pickListHTML(t)+'</div>';
+}
+function sheetPickDay(t){
+  const r=R[t.rid],start=new Date();
+  const days=[...Array(14)].map((_,i)=>addDays(start,i));
+  return '<div class="eyebrow">Meal planner</div><h1>'+r.n+'</h1><p class="muted" style="margin:0">Pick a day. You can change servings on the Plan tab.</p>'+
+    '<div class="rank">'+days.map((d,i)=>{const iso=isoOf(d),n=dayList(iso).length;return '<button data-act="plan-pick-day" data-id="'+iso+'"><b>'+(i===0?'Today':i===1?'Tomorrow':DAYNAMES[(d.getDay()+6)%7])+'</b><span class="mono muted" style="font-size:12.5px">'+shortDate(d)+'</span><small>'+(n?n+' dish'+(n===1?'':'es')+' planned: '+dayList(iso).map(e=>R[e.rid].n).join(", "):'Nothing planned yet')+'</small></button>';}).join("")+'</div>';
+}
+
+/* ---------- grocery list ---------- */
+const STAPLES=["salt","black pepper","oil","sugar","flour","baking powder","baking soda","shortening","water"];
+const SPICEWORDS=["paprika","cayenne","cinnamon","nutmeg","thyme","bay lea","sage","old bay","cajun","seasoning","pepper flakes","celery seed","allspice","garlic powder","onion powder","vanilla","cocoa","food coloring","filé"];
+const PANTRYWORDS=["stock","broth","syrup","cracker","wafer","cornmeal","cornstarch","paste","sauce","vinegar","mustard","mayonnaise","relish","ketchup","pimento","panko","crumb","rice","grits","macaroni","dried","pecan","pickle","tea bag","evaporated","hot sauce","worcestershire"];
+const MEATWORDS=["chicken","beef","pork","sausage","andouille","bacon","ham","turkey","oxtail","steak","shrimp","crawfish","catfish","salmon","fillet"];
+const DAIRYWORDS=["buttermilk","milk","butter","egg","cheese","cheddar","colby","cream","yolk","pie crust","whipped"];
+const BAKERYWORDS=["bread","rolls","biscuits","cornbread"];
+const AISLES=["Meat & Seafood","Produce","Dairy & Refrigerated","Bakery","Frozen","Pantry","Spices & Seasonings","Pantry staples (check first)"];
+function cleanItem(s){let n=s.replace(/\([^)]*\)/g,"").split(",")[0].replace(/\b(divided|for frying|to brush|for brushing|optional)\b/gi,"").replace(/\s+/g," ").trim();return n;}
+function aisleOf(name,unit){
+  const n=name.toLowerCase(),has=a=>a.some(k=>n.includes(k));
+  const word=a=>a.some(k=>new RegExp("\\b"+k+"\\b").test(n)); /* whole words, so "boiled" is not "oil" */
+  if(n.includes("seasoning salt"))return "Spices & Seasonings";
+  if(word(STAPLES)&&!has(["cornmeal","powdered sugar","cornstarch","crackers","eggs"]))return "Pantry staples (check first)";
+  if(["can","jar","box","sleeve"].includes(unit))return "Pantry";
+  if(unit==="sprig")return "Produce";
+  if(has(["frozen"]))return "Frozen";
+  if(has(BAKERYWORDS)&&!has(["crumb"]))return "Bakery";
+  if(has(PANTRYWORDS)||has(["crackers","cornstarch"]))return "Pantry";
+  if(has(MEATWORDS))return "Meat & Seafood"; /* before spices: "sausage" contains "sage" */
+  if(has(SPICEWORDS))return "Spices & Seasonings";
+  if(has(DAIRYWORDS))return "Dairy & Refrigerated";
+  if(has(["onion","garlic","celery","pepper","carrot","potato","tomato","okra","cabbage","collard","lemon","banana","peach","squash","corn","bean","lettuce","pea"]))return "Produce";
+  return "Pantry";
+}
+function buildGrocery(days){
+  const acc={};
+  planEntries(days).forEach(e=>{const r=R[e.rid],f=Number(e.serv||r.s)/r.s;
+    r.i.forEach(x=>{const name=cleanItem(x[2]);if(/^(cold )?water$/i.test(name))return;
+      const key=name.toLowerCase()+"|"+x[1];const a=acc[key]=acc[key]||{name:name.charAt(0).toUpperCase()+name.slice(1),unit:x[1],q:0,dishes:new Set()};
+      a.q+=x[0]*f;a.dishes.add(r.n);});});
+  let lines=Object.values(acc).map(a=>{
+    let amt;if(!a.unit){amt=String(Math.max(1,Math.ceil(a.q-0.01)));}  /* whole items: round up to what you can buy */
+    else{const t=fmtQty(a.q);let u=a.unit;if(a.q>1.01&&PL[u])u=PL[u];amt=t==="pinch"?"pinch":t+" "+u;}
+    return {name:a.name,amt,aisle:aisleOf(a.name,a.unit),dishes:[...a.dishes]};});
+  /* one line per ingredient: the same item measured two ways reads "1 cup + 2" */
+  const merged={};lines.forEach(l=>{const k=l.name.toLowerCase();const m=merged[k];
+    if(!m)merged[k]={...l,dishes:[...l.dishes]};else{m.amt+=" + "+l.amt;l.dishes.forEach(x=>{if(!m.dishes.includes(x))m.dishes.push(x);});}});
+  lines.length=0;lines.push(...Object.values(merged));
+  lines.sort((a,b)=>AISLES.indexOf(a.aisle)-AISLES.indexOf(b.aisle)||a.name.localeCompare(b.name));
+  return lines;
+}
+function groceryText(lines,label){return "Kayla's Kitchen grocery list · "+label+"\n"+AISLES.map(a=>{const g=lines.filter(l=>l.aisle===a);return g.length?"\n"+a+"\n"+g.map(l=>"[ ] "+l.name+" — "+l.amt).join("\n"):"";}).join("")+"\n";}
+function sheetGrocery(t){
+  const days=weekDays(),lines=buildGrocery(days),ents=planEntries(days);
+  const label="week of "+shortDate(parseISO(days[0]));
+  return '<div class="eyebrow">Meal planner</div><h1>Grocery list</h1><p class="muted" style="margin:0">Everything for '+ents.length+' planned dish'+(ents.length===1?'':'es')+', '+label+', combined and sorted by aisle. Amounts are scaled to your servings.</p>'+
+    '<div class="row"><button class="btn small" data-act="grocery-send">Add all to my shopping list</button><button class="btn small ghost" data-act="grocery-copy">Copy list</button></div>'+
+    (t.copyText?'<p class="muted" style="margin:0">Copying is blocked here. Select the text below and copy it.</p><textarea class="copyfall" id="grocfall" readonly>'+esc(t.copyText)+'</textarea>':'')+
+    AISLES.map(a=>{const g=lines.filter(l=>l.aisle===a);if(!g.length)return "";
+      return '<div class="block"><div class="section-head"><h2>'+a+'</h2><span class="mono muted">'+g.length+'</span></div><ul class="ings">'+g.map((l,i)=>'<li><label style="grid-template-columns:22px 1fr auto"><input type="checkbox" aria-label="Got '+esc(l.name)+'"><span>'+esc(l.name)+'<small class="for">for '+esc(l.dishes.join(", "))+'</small></span><span class="amt">'+esc(l.amt)+'</span></label></li>').join("")+'</ul></div>';}).join("");
+}
+
 /* ---------- cooking journal ---------- */
 function isoToday(){const d=new Date(),p=n=>String(n).padStart(2,"0");return d.getFullYear()+"-"+p(d.getMonth()+1)+"-"+p(d.getDate());}
 function niceDate(iso){if(!iso)return "";const [y,m,d]=iso.split("-").map(Number);return new Date(y,m-1,d).toLocaleDateString(undefined,{month:"short",day:"numeric",year:"numeric"});}
@@ -1289,6 +1437,26 @@ document.addEventListener("click",e=>{
     case "cook-close":state.cook=null;if(state.timer){clearInterval(state.timer.iv);state.timer=null;}try{wake&&wake.release();}catch(e){}renderCook();break;
     case "cook-finish":{const rid=state.cook.id,mins=Math.max(1,Math.round((Date.now()-(state.cook.started||Date.now()))/60000));store.cooked[rid]=today();save();state.cook=null;if(state.timer){clearInterval(state.timer.iv);state.timer=null;}try{wake&&wake.release();}catch(e){}renderCook();render();
       state.stack.push({type:"log",draft:newDraft(rid,mins)});renderSheet();toast(R[rid].n+" is done. Log what you used.");break;}
+    case "plan-week":{const n=Number(id);state.planWeek=n?isoOf(addDays(parseISO(curWeek()),n)):isoOf(mondayOf(new Date()));state.planClear=false;render();break;}
+    case "plan-auto":{const n=autoFill();pruneOldPlan();save();render();toast(n?"Filled "+n+" day"+(n===1?"":"s")+". Swap anything you like.":"Every day already has a dish.");break;}
+    case "plan-add":state.stack.push({type:"pick-recipe",day:id,q:""});renderSheet();break;
+    case "plan-pick":{const t=state.stack[state.stack.length-1];addToPlan(t.day,id);state.stack.pop();renderSheet();render();const dt=parseISO(t.day);toast(R[id].n+" added to "+DAYNAMES[(dt.getDay()+6)%7]);break;}
+    case "plan-day-pick":state.stack.push({type:"pick-day",rid:id});renderSheet();break;
+    case "plan-pick-day":{const t=state.stack[state.stack.length-1],r=R[t.rid];addToPlan(id,t.rid,state.serv[t.rid]||r.s);state.stack.pop();renderSheet();render();const dt=parseISO(id);
+      if(isoOf(mondayOf(dt))!==curWeek())state.planWeek=isoOf(mondayOf(dt));toast(r.n+" added to "+DAYNAMES[(dt.getDay()+6)%7]+", "+shortDate(dt));break;}
+    case "plan-serv":{const l=store.plan[b.dataset.day],e=l&&l[Number(b.dataset.i)];if(e){e.serv=Math.min(48,Math.max(1,Number(e.serv)+Number(b.dataset.d)));save();render();}break;}
+    case "plan-del":{const l=store.plan[b.dataset.day];if(l){const e=l.splice(Number(b.dataset.i),1)[0];if(!l.length)delete store.plan[b.dataset.day];save();render();if(e&&R[e.rid])toast(R[e.rid].n+" removed");}break;}
+    case "plan-open":{const e=(store.plan[b.dataset.day]||[])[Number(b.dataset.i)];if(e&&R[e.rid]){state.serv[e.rid]=e.serv;push("recipe",e.rid);}break;}
+    case "plan-clear":if(!state.planClear){state.planClear=true;render();break;}
+      weekDays().forEach(d=>delete store.plan[d]);state.planClear=false;save();render();toast("Week cleared");break;
+    case "plan-grocery":if(planEntries(weekDays()).length){state.stack.push({type:"grocery"});renderSheet();}break;
+    case "grocery-send":{const days=weekDays(),from="Meal plan · week of "+shortDate(parseISO(days[0]));let n=0;
+      buildGrocery(days).forEach(l=>{const text=l.name+" — "+l.amt;if(!store.shop.some(s=>s.text===text&&s.from===from)){store.shop.push({text,from,done:false});n++;}});
+      save();render();toast(n?n+" items added to your shopping list in My Kitchen":"Already on your shopping list");break;}
+    case "grocery-copy":{const days=weekDays(),text=groceryText(buildGrocery(days),"week of "+shortDate(parseISO(days[0])));const t=state.stack[state.stack.length-1];
+      const fallback=()=>{t.copyText=text;refreshSheet();const ta=$("#grocfall");if(ta){ta.focus();ta.select();}};
+      try{navigator.clipboard.writeText(text).then(()=>toast("Grocery list copied"),fallback);}catch(err){fallback();}
+      break;}
     case "log-new":state.stack.push({type:"log",draft:newDraft(id||"","")});renderSheet();break;
     case "log-open":{const e=store.journal.find(x=>x.id===id);if(e){state.stack.push({type:"log",draft:JSON.parse(JSON.stringify(e))});renderSheet();}break;}
     case "log-row-add":{const t=syncDraft();t.draft.ings.push({a:"",item:""});refreshSheet();const rows=document.querySelectorAll("#sheet .log-a");if(rows.length)rows[rows.length-1].focus();break;}
@@ -1333,7 +1501,10 @@ document.addEventListener("change",e=>{
       if(d.ings.every(x=>!x.a.trim()&&!x.item.trim())){const f=(Number(d.serv)||r.s)/r.s;d.ings=r.i.map(x=>({a:amount(x,f),item:x[2]}));}}
     refreshSheet();}
 });
-document.addEventListener("input",e=>{if(e.target.id==="q"){state.q=e.target.value;$("#list").innerHTML=listHTML();}});
+document.addEventListener("input",e=>{
+  if(e.target.id==="q"){state.q=e.target.value;$("#list").innerHTML=listHTML();}
+  if(e.target.id==="pq"){const t=state.stack[state.stack.length-1];if(t&&t.type==="pick-recipe"){t.q=e.target.value;$("#pick-list").innerHTML=pickListHTML(t);}}
+});
 document.addEventListener("keydown",e=>{if(e.key==="Escape"){if(state.cook){$("[data-act=cook-close]").click();}else if(state.stack.length){state.stack.pop();renderSheet();render();}}});
 document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible"&&state.cook)lockScreen();});
 
